@@ -1,0 +1,77 @@
+Classes and others to be added soon
+
+main program overview:
+
+BEGIN
+    DISPLAY "Welcome to File Manager by File Explorers"
+    DISPLAY "Type 'help' for help. Enter command:"
+
+    WHILE user_input IS NOT "exit"
+        ACCEPT user_input
+        command_terms = SPLIT user_input BY " "
+        
+        SWITCH command_terms[0]
+            CASE "help"
+                DISPLAY available_commands
+                
+            CASE "create_file"
+                IF command_terms[1] IS PRESENT AND IS VALID PATH
+                    CREATE FILE AT command_terms[1]
+                ELSE
+                    DISPLAY "Invalid file path. Please try again."
+                    CONTINUE LOOP
+                
+            CASE "create_dir"
+                IF command_terms[1] IS PRESENT AND IS VALID PATH
+                    CREATE DIRECTORY AT command_terms[1]
+                ELSE
+                    DISPLAY "Invalid directory path. Please try again."
+                    CONTINUE LOOP
+                
+            CASE "delete"
+                IF command_terms[1] IS PRESENT AND IS VALID PATH
+                    IF PATH EXISTS command_terms[1]
+                        DELETE FILE OR DIRECTORY AT command_terms[1]
+                    ELSE
+                        DISPLAY "Path does not exist. Please try again."
+                ELSE
+                    DISPLAY "Invalid path. Please try again."
+                    CONTINUE LOOP
+                
+            CASE "move"
+                IF command_terms[1] AND command_terms[2] ARE PRESENT AND VALID PATHS
+                    IF PATH EXISTS command_terms[1]
+                        REMOVE FILE OR DIRECTORY FROM command_terms[1]
+                        ADD FILE OR DIRECTORY TO command_terms[2]
+                    ELSE
+                        DISPLAY "Source path does not exist. Please try again."
+                ELSE
+                    DISPLAY "Invalid paths. Please try again."
+                    CONTINUE LOOP
+                
+            CASE "search"
+                IF command_terms[1] AND command_terms[2] ARE PRESENT AND VALID
+                    RESULT = SEARCH BY command_terms[1] WITH VALUE command_terms[2]
+                    IF RESULT IS NOT EMPTY
+                        DISPLAY RESULT
+                    ELSE
+                        DISPLAY "No matches found."
+                ELSE
+                    DISPLAY "Invalid search parameters. Please try again."
+                    CONTINUE LOOP
+                
+            CASE "sort"
+                IF command_terms[1] IS PRESENT AND VALID ATTRIBUTE
+                    SORT FILES AND DIRECTORIES BY command_terms[1]
+                ELSE
+                    DISPLAY "Invalid sort attribute. Please try again."
+                    CONTINUE LOOP
+                
+            CASE "show_structure"
+                DISPLAY DIRECTORY OUTLINE
+            
+            DEFAULT
+                DISPLAY "Unknown command. Type 'help' for a list of commands."
+    
+    END WHILE
+END
