@@ -10,6 +10,7 @@
 
 
 ## Core Functionality Development (mostly from chatGPT)
+### I think we can start with this
 
 1. **Create the Java Project**:
    - Use an IDE like IntelliJ IDEA, Eclipse, or a simple text editor with command-line tools.
