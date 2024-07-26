@@ -29,15 +29,15 @@ class TreeNode<T> {
         return children.size() == 0;
     }
 
-  public int getLevel() {
-    if (this.isRoot())
-      return 0;
+    public int getLevel() {
+        if (this.isRoot())
+            return 0;
     else
-      return parent.getLevel() + 1;
-  }
+        return parent.getLevel() + 1;
+    }
 
-  @Override
-  public String toString() {
-    return root != null ? root.toString() : "null";
-  }
+    @Override
+    public String toString() {
+        return root != null ? root.toString() : "null";
+    }
 }
