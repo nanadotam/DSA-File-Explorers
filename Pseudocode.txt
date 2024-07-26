@@ -28,16 +28,29 @@ BEGIN
                     DISPLAY "Invalid directory path. Please try again."
                     CONTINUE LOOP
                 
-            CASE "delete"
+            CASE "del"
                 IF command_terms[1] IS PRESENT AND IS VALID PATH
                     IF PATH EXISTS command_terms[1]
-                        DELETE FILE OR DIRECTORY AT command_terms[1]
+                        IF FILE AT command_terms[1] EXISTS
+                            DELETE FILE AT command_terms[1]
+                        ELSE
+                            DISPLAY "File does not exist. Please try again."
+                    ELSE
+                        DISPLAY "Path does not exist. Please try again."
+                ELSE 
+                    DISPLAY "Invalid path. Please try again."
+                    CONTINUE LOOP
+
+            CASE "del_dir"
+                IF command_terms[1] IS PRESENT AND IS VALID PATH
+                    IF PATH EXISTS command_terms[1]
+                        DELETE DIRECTORY AT command_terms[1]
                     ELSE
                         DISPLAY "Path does not exist. Please try again."
                 ELSE
                     DISPLAY "Invalid path. Please try again."
                     CONTINUE LOOP
-                
+
             CASE "move"
                 IF command_terms[1] AND command_terms[2] ARE PRESENT AND VALID PATHS
                     IF PATH EXISTS command_terms[1]
