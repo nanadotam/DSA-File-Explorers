@@ -12,13 +12,20 @@ public class TreeNode<T> {
         this.data = data;
         this.children = new ArrayList<>();
     }
-}
 
-class FileExplorers {
-    TreeNode root;
+    public TreeNode<T> addChild(T child) {
+        TreeNode<T> childNode = new TreeNode<T>(child);
+        childNode.parent = this;
+        this.children.add(childNode);
+        return childNode;
+  }
 
-    public FileExplorers() {
-        this.root = null;
+    public TreeNode<T> getRoot() { 
+        return root;
     }
+
+    
+    
+}
 
 
