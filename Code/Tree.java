@@ -3,9 +3,10 @@ import java.util.*;
 
 // java code for above approach
 
-class TreeNode<T> {
-    T data;
-    List<TreeNode> children;
+public class TreeNode<T> {
+    private final T root;
+    private T parent;
+    private List<TreeNode> children;
 
     public TreeNode(T data) {
         this.data = data;
