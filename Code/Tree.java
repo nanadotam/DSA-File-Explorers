@@ -3,7 +3,7 @@ import java.util.*;
 
 // java code for above approach
 
-class TreeNode,T> {
+class TreeNode<T> {
     T data;
     List<TreeNode> children;
 
