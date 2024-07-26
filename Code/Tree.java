@@ -3,11 +3,11 @@ import java.util.*;
 
 // java code for above approach
 
-class TreeNode {
-    String data;
+class TreeNode,T> {
+    T data;
     List<TreeNode> children;
 
-    public TreeNode(String data) {
+    public TreeNode(T data) {
         this.data = data;
         this.children = new ArrayList<>();
     }
