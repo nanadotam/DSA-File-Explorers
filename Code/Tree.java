@@ -23,9 +23,13 @@ public class TreeNode<T> {
     public TreeNode<T> getRoot() { 
         return root;
     }
+<<<<<<< HEAD
 
     
     
 }
 
 
+=======
+}
+>>>>>>> fb88ff6 (Changes made)
