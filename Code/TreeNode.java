@@ -33,6 +33,21 @@ class TreeNode<T> {
         return childNode;
     }
 
+    // Nana
+    /**
+     * Returns the child node at the specified index.
+     *
+     * @param index the index of the child node
+     * @return the child node at the specified index
+     * @throws IndexOutOfBoundsException if the index is out of range
+     */
+    public TreeNode<T> getChildren(int index) {
+        if (index < 0 || index >= children.size()) {
+            throw new IndexOutOfBoundsException("Invalid index");
+        }
+        return children.get(index);
+    }
+
     /**
      * Returns the root data of this node.
      *
@@ -82,4 +97,3 @@ class TreeNode<T> {
         return root != null ? root.toString() : "null";
     }
 }
-

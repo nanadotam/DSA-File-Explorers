@@ -2,111 +2,8 @@ import java.util.Scanner;
 
 public class Directory {
     
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        String user_input;
-        
-        System.out.println("Welcome to File Manager by File Explorers");
-        System.out.println("Type 'help' for help. Enter command:");
-        
-        while (true) {
-            user_input = scanner.nextLine();
-            String[] command_terms = user_input.split(" ");
-            
-            switch (command_terms[0]) {
-                case "help":
-                    displayAvailableCommands();
-                    break;
-                    
-                case "create_file":
-                    if (isValidPath(command_terms[1])) {
-                        createFile(command_terms[1]);
-                    } else {
-                        System.out.println("Invalid file path. Please try again.");
-                    }
-                    break;
-                    
-                case "create_dir":
-                    if (isValidPath(command_terms[1])) {
-                        createDirectory(command_terms[1]);
-                    } else {
-                        System.out.println("Invalid directory path. Please try again.");
-                    }
-                    break;
-                    
-                case "del":
-                    if (isValidPath(command_terms[1])) {
-                        if (pathExists(command_terms[1])) {
-                            if (isFile(command_terms[1])) {
-                                deleteFile(command_terms[1]);
-                            } else {
-                                System.out.println("File does not exist. Please try again.");
-                            }
-                        } else {
-                            System.out.println("Path does not exist. Please try again.");
-                        }
-                    } else {
-                        System.out.println("Invalid path. Please try again.");
-                    }
-                    break;
-                    
-                case "del_dir":
-                    if (isValidPath(command_terms[1])) {
-                        if (pathExists(command_terms[1])) {
-                            deleteDirectory(command_terms[1]);
-                        } else {
-                            System.out.println("Path does not exist. Please try again.");
-                        }
-                    } else {
-                        System.out.println("Invalid path. Please try again.");
-                    }
-                    break;
-                    
-                case "move":
-                    if (isValidPath(command_terms[1]) && isValidPath(command_terms[2])) {
-                        if (pathExists(command_terms[1])) {
-                            moveFileOrDirectory(command_terms[1], command_terms[2]);
-                        } else {
-                            System.out.println("Source path does not exist. Please try again.");
-                        }
-                    } else {
-                        System.out.println("Invalid paths. Please try again.");
-                    }
-                    break;
-                    
-                case "search":
-                    if (command_terms.length == 3) {
-                        String attribute = command_terms[1];
-                        String value = command_terms[2];
-                        search(attribute, value);
-                    } else {
-                        System.out.println("Invalid search parameters. Please try again.");
-                    }
-                    break;
-                    
-                case "sort":
-                    if (isValidAttribute(command_terms[1])) {
-                        sort(command_terms[1]);
-                    } else {
-                        System.out.println("Invalid sort attribute. Please try again.");
-                    }
-                    break;
-                    
-                case "show_structure":
-                    displayDirectoryOutline();
-                    break;
-                    
-                case "exit":
-                    System.exit(0);
-                    
-                default:
-                    System.out.println("Unknown command. Type 'help' for a list of commands.");
-                    break;
-            }
-            scanner.close();
-        }
-    }
-    
+    private static DirectoryNode root = new DirectoryNode("root");
+
     private static void displayAvailableCommands() {
         System.out.println("Available commands:");
         System.out.println("help");
@@ -123,15 +20,43 @@ public class Directory {
     
     private static boolean isValidPath(String path) {
         // Implement validation logic for path
-        return true;
+        // return true;
+        return path != null && !path.trim().isEmpty();
     }
     
     private static void createFile(String filePath) {
         // Implement logic to create a file at filePath
+        String[] parts = filePath.split("/");
+        DirectoryNode current = root;
+        for (int i = 0; i < parts.length - 1; i++) {
+            current = findDirectory(current, parts[i]);
+        }
+        current.addChild(new FileNode(parts[parts.length - 1]));
     }
     
+
+    // Nana
     private static void createDirectory(String dirPath) {
-        // Implement logic to create a directory at dirPath
+        String[] parts = dirPath.split("/");
+        DirectoryNode current = root;
+        for (String part : parts) {
+            DirectoryNode next = findDirectory(current, part);
+            if (next == null) {
+                next = new DirectoryNode(part);
+                current.addChild(next);
+            }
+            current = next;
+        }
+    }
+
+    // Nana
+    private static DirectoryNode findDirectory(DirectoryNode current, String name) {
+        for (TreeNode<String> child : current.getChildren()) {
+            if (child.getRoot().equals(name) && child instanceof DirectoryNode) {
+                return (DirectoryNode) child;
+            }
+        }
+        return null;
     }
     
     private static boolean pathExists(String path) {
