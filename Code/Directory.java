@@ -1,12 +1,11 @@
-import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Represents the directory structure and provides methods to manipulate it.
  */
 public class Directory {
 
-    static Folder root = new Folder("root", "01/01/2024", "0KB");
-    // Should be private later on
+    private static Folder root = new Folder("root", new Date().toString(), "0KB");
 
     /**
      * Checks if the given path is valid.
@@ -26,14 +25,11 @@ public class Directory {
     public static void createFile(String filePath) {
         String[] parts = filePath.split("/");
         Folder current = root;
-        for (int i = 0; i < parts.length - 1; i++) {
-            current = findDirectory(current, parts[i]);
-            if (current == null) {
-                System.out.println("Invalid path: " + filePath);
-                return;
-            }
+        if (pathExists(filePath)) {
+            // file type will depend on user
+            // file size...
+            current.getContents().add(new File(parts[parts.length - 1], new Date().toString(), "txt", "1KB"));
         }
-        current.getContents().add(new File(parts[parts.length - 1], "01/01/2024", "txt", "1KB"));
     }
 
     /**
@@ -47,7 +43,7 @@ public class Directory {
         for (String part : parts) {
             Folder next = findDirectory(current, part);
             if (next == null) {
-                next = new Folder(part, "01/01/2024", "0KB");
+                next = new Folder(part, new Date().toString(), "0KB");
                 current.getContents().add(next);
             }
             current = next;
@@ -77,6 +73,18 @@ public class Directory {
      * @return true if the path exists, false otherwise
      */
     public static boolean pathExists(String path) {
+        if (!isValidPath(path)) {
+            return false;
+        }
+        String[] parts = path.split("/");
+        Folder current = root;
+        for (int i = 0; i < parts.length - 1; i++) {
+            current = findDirectory(current, parts[i]);
+            if (current == null) {
+                System.out.println("Invalid path: " + path);
+                return false;
+            }
+        }
         return true;
     }
 
@@ -87,18 +95,42 @@ public class Directory {
      * @return true if the path is a file, false otherwise
      */
     public static boolean isFile(String path) {
+        // Step 1: Validate the path
+        if (!isValidPath(path) || !pathExists(path)) {
+            return false;
+        }
+
+        // Step 2: Split the path into parts
         String[] parts = path.split("/");
         Folder current = root;
+
+        // Step 3: Navigate through the folder structure
         for (int i = 0; i < parts.length - 1; i++) {
-            current = findDirectory(current, parts[i]);
-            if (current == null) {
-                System.out.println("Invalid path: " + path);
-                return false;
+            boolean found = false;
+            for (FileExplorerElement element : current.getContents()) {
+                if (element instanceof Folder && element.getName().equals(parts[i])) {
+                    current = (Folder) element;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return false; // Path does not exist
             }
         }
-        File file = findFile(current, parts[parts.length - 1]);
-        return file != null;
+
+        // Step 4: Check if the last part of the path is a file
+        for (FileExplorerElement element : current.getContents()) {
+            if (element instanceof File && element.getName().equals(parts[parts.length - 1])) {
+                return true;
+            }
+        }
+
+        return false;
     }
+
+
+
 
     /**
      * Finds a file with the given name in the specified folder.
@@ -115,14 +147,32 @@ public class Directory {
         }
         return null;
     }
-
     /**
      * Deletes a file at the specified file path.
      *
      * @param filePath the file path
      */
     public static void deleteFile(String filePath) {
-        // Implement logic to delete a file at filePath
+        if (isFile(filePath)) {
+            String[] parts = filePath.split("/");
+            Folder current = root;
+            for (int i = 0; i < parts.length - 1; i++) {
+                current = findDirectory(current, parts[i]);
+                if (current == null) {
+                    System.out.println("Invalid path: " + filePath);
+                    return;
+                }
+            }
+            File fileToDelete = findFile(current, parts[parts.length - 1]);
+            if (fileToDelete != null) {
+                current.getContents().remove(fileToDelete);
+                System.out.println("File deleted: " + filePath);
+            } else {
+                System.out.println("File not found: " + filePath);
+            }
+        } else {
+            System.out.println("Invalid file path: " + filePath);
+        }
     }
 
     /**
