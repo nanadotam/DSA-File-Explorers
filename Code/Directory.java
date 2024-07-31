@@ -95,23 +95,42 @@ public class Directory {
      * @return true if the path is a file, false otherwise
      */
     public static boolean isFile(String path) {
-        if (isValidPath(path) && pathExists(path)) {
-            String[] parts = path.split("/");
-            Folder current = root;
-            current.getContents().add(new File(parts[parts.length - 1], new Date().toString(), "txt", "1KB"));
+        // Step 1: Validate the path
+        if (!isValidPath(path) || !pathExists(path)) {
+            return false;
+        }
 
-            // Check if the last part of the path is a file
+        // Step 2: Split the path into parts
+        String[] parts = path.split("/");
+        Folder current = root;
+
+        // Step 3: Navigate through the folder structure
+        for (int i = 0; i < parts.length - 1; i++) {
+            boolean found = false;
             for (FileExplorerElement element : current.getContents()) {
-                if (element instanceof File && element.getName().equals(parts[parts.length - 1])) {
-                    return true;
+                if (element instanceof Folder && element.getName().equals(parts[i])) {
+                    current = (Folder) element;
+                    found = true;
+                    break;
                 }
             }
+            if (!found) {
+                return false; // Path does not exist
+            }
         }
-    
+
+        // Step 4: Check if the last part of the path is a file
+        for (FileExplorerElement element : current.getContents()) {
+            if (element instanceof File && element.getName().equals(parts[parts.length - 1])) {
+                return true;
+            }
+        }
+
         return false;
     }
 
-    
+
+
 
     /**
      * Finds a file with the given name in the specified folder.
