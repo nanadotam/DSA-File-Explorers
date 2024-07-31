@@ -5,7 +5,7 @@ import java.util.Date;
  */
 public class Directory {
 
-    private static Folder root = new Folder("root", "01/01/2024", "0KB");
+    private static Folder root = new Folder("root", new Date().toString(), "0KB");
 
     /**
      * Checks if the given path is valid.
