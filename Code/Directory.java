@@ -103,7 +103,33 @@ public class Directory {
      * @return true if the path is a file, false otherwise
      */
     public static boolean isFile(String path) {
-        return true;
+        String[] parts = path.split("/");
+        Folder current = root;
+        for (int i = 0; i < parts.length - 1; i++) {
+            current = findDirectory(current, parts[i]);
+            if (current == null) {
+                System.out.println("Invalid path: " + path);
+                return false;
+            }
+        }
+        File file = findFile(current, parts[parts.length - 1]);
+        return file != null;
+    }
+
+    /**
+     * Finds a file with the given name in the specified folder.
+     *
+     * @param current the current folder
+     * @param name the name of the file to find
+     * @return the found file, or null if not found
+     */
+    public static File findFile(Folder current, String name) {
+        for (FileExplorerElement element : current.getContents()) {
+            if (element.getName().equals(name) && element instanceof File) {
+                return (File) element;
+            }
+        }
+        return null;
     }
 
     /**
@@ -121,7 +147,25 @@ public class Directory {
      * @param dirPath the directory path
      */
     public static void deleteDirectory(String dirPath) {
-        // Implement logic to delete a directory at dirPath
+        String[] parts = dirPath.split("/");
+        Folder current = root;
+        for (int i = 0; i < parts.length; i++) {
+            if (i == parts.length - 1) {
+                Folder dirToDel = findDirectory(current, parts[i]);
+                if (dirToDel != null) {
+                    current.getContents().remove(dirToDel);
+                    System.out.println("Directory deleted: " + dirPath);
+                } else {
+                    System.out.println("Directory not found: " + dirPath);
+                }
+            } else {
+                current = findDirectory(current, parts[i]);
+                if (current == null) {
+                    System.out.println("Invalid path: " + dirPath);
+                    return;
+                }
+            }
+        }
     }
 
     /**
@@ -131,7 +175,11 @@ public class Directory {
      * @param destinationPath the destination path
      */
     public static void moveFileOrDirectory(String sourcePath, String destinationPath) {
-        // Implement logic to move a file or directory from sourcePath to destinationPath
+        if (isFile(sourcePath)) {
+            //move the file to the destination 
+        }
+
+
     }
 
     /**
@@ -151,6 +199,7 @@ public class Directory {
      * @return true if the attribute is valid, false otherwise
      */
     public static boolean isValidAttribute(String attribute) {
+        // Valid Attributes: Name, Size, Item Type, Date Modified
         return true;
     }
 
