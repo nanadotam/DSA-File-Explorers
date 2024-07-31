@@ -147,14 +147,32 @@ public class Directory {
         }
         return null;
     }
-
     /**
      * Deletes a file at the specified file path.
      *
      * @param filePath the file path
      */
     public static void deleteFile(String filePath) {
-        // Implement logic to delete a file at filePath
+        if (isFile(filePath)) {
+            String[] parts = filePath.split("/");
+            Folder current = root;
+            for (int i = 0; i < parts.length - 1; i++) {
+                current = findDirectory(current, parts[i]);
+                if (current == null) {
+                    System.out.println("Invalid path: " + filePath);
+                    return;
+                }
+            }
+            File fileToDelete = findFile(current, parts[parts.length - 1]);
+            if (fileToDelete != null) {
+                current.getContents().remove(fileToDelete);
+                System.out.println("File deleted: " + filePath);
+            } else {
+                System.out.println("File not found: " + filePath);
+            }
+        } else {
+            System.out.println("Invalid file path: " + filePath);
+        }
     }
 
     /**
