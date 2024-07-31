@@ -20,6 +20,11 @@ class TreeNode<T> {
         children = new ArrayList<>();
     }
 
+    public TreeNode(T root, ArrayList<TreeNode<T>> children){
+        this.root = root;
+        this.children = children;
+    }
+
     /**
      * Adds a child node with the specified data to this node.
      *
