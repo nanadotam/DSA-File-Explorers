@@ -1,3 +1,5 @@
+import java.util.Date;
+
 /**
  * Represents the directory structure and provides methods to manipulate it.
  */
@@ -23,14 +25,11 @@ public class Directory {
     public static void createFile(String filePath) {
         String[] parts = filePath.split("/");
         Folder current = root;
-        for (int i = 0; i < parts.length - 1; i++) {
-            current = findDirectory(current, parts[i]);
-            if (current == null) {
-                System.out.println("Invalid path: " + filePath);
-                return;
-            }
+        if (pathExists(filePath)) {
+            // file type will depend on user
+            // file size...
+            current.getContents().add(new File(parts[parts.length - 1], new Date().toString(), "txt", "1KB"));
         }
-        current.getContents().add(new File(parts[parts.length - 1], "01/01/2024", "txt", "1KB"));
     }
 
     /**
@@ -74,6 +73,18 @@ public class Directory {
      * @return true if the path exists, false otherwise
      */
     public static boolean pathExists(String path) {
+        if (!isValidPath(path)) {
+            return false;
+        }
+        String[] parts = path.split("/");
+        Folder current = root;
+        for (int i = 0; i < parts.length - 1; i++) {
+            current = findDirectory(current, parts[i]);
+            if (current == null) {
+                System.out.println("Invalid path: " + path);
+                return false;
+            }
+        }
         return true;
     }
 
