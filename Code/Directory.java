@@ -5,7 +5,8 @@ import java.util.Date;
  */
 public class Directory {
 
-    private static Folder root = new Folder("root", new Date().toString(), "0KB");
+    static Folder root = new Folder("root", new Date().toString(), "0KB");
+    // Should be private later on,made public for testing
 
     /**
      * Checks if the given path is valid.
@@ -128,9 +129,6 @@ public class Directory {
 
         return false;
     }
-
-
-
 
     /**
      * Finds a file with the given name in the specified folder.
