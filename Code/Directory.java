@@ -43,7 +43,7 @@ public class Directory {
         for (String part : parts) {
             Folder next = findDirectory(current, part);
             if (next == null) {
-                next = new Folder(part, "01/01/2024", "0KB");
+                next = new Folder(part, new Date().toString(), "0KB");
                 current.getContents().add(next);
             }
             current = next;
@@ -95,18 +95,23 @@ public class Directory {
      * @return true if the path is a file, false otherwise
      */
     public static boolean isFile(String path) {
-        String[] parts = path.split("/");
-        Folder current = root;
-        for (int i = 0; i < parts.length - 1; i++) {
-            current = findDirectory(current, parts[i]);
-            if (current == null) {
-                System.out.println("Invalid path: " + path);
-                return false;
+        if (isValidPath(path) && pathExists(path)) {
+            String[] parts = path.split("/");
+            Folder current = root;
+            current.getContents().add(new File(parts[parts.length - 1], new Date().toString(), "txt", "1KB"));
+
+            // Check if the last part of the path is a file
+            for (FileExplorerElement element : current.getContents()) {
+                if (element instanceof File && element.getName().equals(parts[parts.length - 1])) {
+                    return true;
+                }
             }
         }
-        File file = findFile(current, parts[parts.length - 1]);
-        return file != null;
+    
+        return false;
     }
+
+    
 
     /**
      * Finds a file with the given name in the specified folder.
