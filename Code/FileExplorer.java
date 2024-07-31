@@ -103,7 +103,9 @@ public class FileExplorer {
                     System.out.println("Unknown command. Type 'help' for a list of commands.");
                     break;
             }
+            scanner.close();
         }
+        
     }
 
     private static void displayAvailableCommands() {
@@ -119,4 +121,7 @@ public class FileExplorer {
         System.out.println("show_structure");
         System.out.println("exit");
     }
+
+
 }
+

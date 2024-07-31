@@ -1,51 +1,47 @@
-// import java.util.*;
-
-public class File {
-    private String fileName;
+/**
+ * Represents a file in the file explorer.
+ */
+public class File extends FileExplorerElement {
     private String fileType;
 
     /**
-     * @param fileName Indicates the name of the file(word,excel)
-     * @param fileType Indicates the type of the file(.doc,.pdf)
+     * Constructs a new File with the specified name, date modified, file type, and size.
+     *
+     * @param name the name of the file
+     * @param dateModified the date the file was last modified
+     * @param fileType the type of the file
+     * @param size the size of the file
      */
-    public File(String fileName, String fileType) {
-        this.fileName = fileName;
+    public File(String name, String dateModified, String fileType, String size) {
+        super(name, dateModified, size);
         this.fileType = fileType;
     }
 
     /**
-     * @return The name of the file
-     */
-    public String getFileName() {
-        return fileName;
-    }
-
-    /**
-     * @param fileName 
-     */
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    /**
-     * @return The file type
+     * Gets the file type.
+     *
+     * @return the file type
      */
     public String getFileType() {
         return fileType;
     }
 
     /**
-     * @param fileType 
+     * Sets the file type.
+     *
+     * @param fileType the new file type
      */
     public void setFileType(String fileType) {
         this.fileType = fileType;
     }
 
     /**
-     * @return The name of the file and it's type
+     * Returns a string representation of the file, including its type.
+     *
+     * @return a string representation of the file
      */
     @Override
     public String toString() {
-        return "fileName." +fileType;
+        return getName() + "." + fileType + " (Modified: " + getDateModified() + ", Size: " + getSize() + ")";
     }
 }
