@@ -1,28 +1,9 @@
-import java.util.Scanner;
-
 /**
  * Represents the directory structure and provides methods to manipulate it.
  */
 public class Directory {
 
     private static Folder root = new Folder("root", "01/01/2024", "0KB");
-
-    /**
-     * Displays the available commands.
-     */
-    private static void displayAvailableCommands() {
-        System.out.println("Available commands:");
-        System.out.println("help");
-        System.out.println("create_file <file_path>");
-        System.out.println("create_dir <dir_path>");
-        System.out.println("del <path>");
-        System.out.println("del_dir <dir_path>");
-        System.out.println("move <source_path> <destination_path>");
-        System.out.println("search <attribute> <value>");
-        System.out.println("sort <attribute>");
-        System.out.println("show_structure");
-        System.out.println("exit");
-    }
 
     /**
      * Checks if the given path is valid.
@@ -219,22 +200,4 @@ public class Directory {
         // Implement logic to display the directory outline
     }
 
-    /**
-     * Main method to start the directory management application.
-     *
-     * @param args command-line arguments
-     */
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        displayAvailableCommands();
-        while (true) {
-            System.out.print("Enter command: ");
-            String command = scanner.nextLine();
-            if (command.equals("exit")) {
-                break;
-            }
-            // Implement command handling logic
-        }
-        scanner.close();
-    }
 }
