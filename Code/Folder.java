@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,6 +16,7 @@ public class Folder extends FileExplorerElement {
      */
     public Folder(String name, String dateModified, String size) {
         super(name, dateModified, size);
+        this.contents = new ArrayList<>();
     }
 
     /**

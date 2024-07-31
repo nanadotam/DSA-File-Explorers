@@ -1,9 +1,12 @@
+import java.util.ArrayList;
+
 /**
  * Represents the directory structure and provides methods to manipulate it.
  */
 public class Directory {
 
-    private static Folder root = new Folder("root", "01/01/2024", "0KB");
+    static Folder root = new Folder("root", "01/01/2024", "0KB");
+    // Should be private later on
 
     /**
      * Checks if the given path is valid.

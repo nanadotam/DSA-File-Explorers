@@ -9,85 +9,110 @@ public class FileExplorer {
         System.out.println("Welcome to File Manager by File Explorers");
         System.out.println("Type 'help' for help. Enter command:");
 
-        while (true) {
+        String[] command_terms;
+        do
+        {
             user_input = scanner.nextLine();
-            String[] command_terms = user_input.split(" ");
+            command_terms = user_input.split(" ");
 
-            switch (command_terms[0]) {
+            switch (command_terms[0])
+            {
                 case "help":
                     displayAvailableCommands();
                     break;
 
                 case "create_file":
-                    if (Directory.isValidPath(command_terms[1])) {
+                    if (Directory.isValidPath(command_terms[1]))
+                    {
                         Directory.createFile(command_terms[1]);
-                    } else {
+                    } else
+                    {
                         System.out.println("Invalid file path. Please try again.");
                     }
                     break;
 
                 case "create_dir":
-                    if (Directory.isValidPath(command_terms[1])) {
+                    if (Directory.isValidPath(command_terms[1]))
+                    {
                         Directory.createDirectory(command_terms[1]);
-                    } else {
+                    } else
+                    {
                         System.out.println("Invalid directory path. Please try again.");
                     }
                     break;
 
                 case "del":
-                    if (Directory.isValidPath(command_terms[1])) {
-                        if (Directory.pathExists(command_terms[1])) {
-                            if (Directory.isFile(command_terms[1])) {
+                    if (Directory.isValidPath(command_terms[1]))
+                    {
+                        if (Directory.pathExists(command_terms[1]))
+                        {
+                            if (Directory.isFile(command_terms[1]))
+                            {
                                 Directory.deleteFile(command_terms[1]);
-                            } else {
+                            } else
+                            {
                                 System.out.println("File does not exist. Please try again.");
                             }
-                        } else {
+                        } else
+                        {
                             System.out.println("Path does not exist. Please try again.");
                         }
-                    } else {
+                    } else
+                    {
                         System.out.println("Invalid path. Please try again.");
                     }
                     break;
 
                 case "del_dir":
-                    if (Directory.isValidPath(command_terms[1])) {
-                        if (Directory.pathExists(command_terms[1])) {
+                    if (Directory.isValidPath(command_terms[1]))
+                    {
+                        if (Directory.pathExists(command_terms[1]))
+                        {
                             Directory.deleteDirectory(command_terms[1]);
-                        } else {
+                        } else
+                        {
                             System.out.println("Path does not exist. Please try again.");
                         }
-                    } else {
+                    } else
+                    {
                         System.out.println("Invalid path. Please try again.");
                     }
                     break;
 
                 case "move":
-                    if (Directory.isValidPath(command_terms[1]) && Directory.isValidPath(command_terms[2])) {
-                        if (Directory.pathExists(command_terms[1])) {
+                    if (Directory.isValidPath(command_terms[1]) && Directory.isValidPath(command_terms[2]))
+                    {
+                        if (Directory.pathExists(command_terms[1]))
+                        {
                             Directory.moveFileOrDirectory(command_terms[1], command_terms[2]);
-                        } else {
+                        } else
+                        {
                             System.out.println("Source path does not exist. Please try again.");
                         }
-                    } else {
+                    } else
+                    {
                         System.out.println("Invalid paths. Please try again.");
                     }
                     break;
 
                 case "search":
-                    if (command_terms.length == 3) {
+                    if (command_terms.length == 3)
+                    {
                         String attribute = command_terms[1];
                         String value = command_terms[2];
                         Directory.search(attribute, value);
-                    } else {
+                    } else
+                    {
                         System.out.println("Invalid search parameters. Please try again.");
                     }
                     break;
 
                 case "sort":
-                    if (Directory.isValidAttribute(command_terms[1])) {
+                    if (Directory.isValidAttribute(command_terms[1]))
+                    {
                         Directory.sort(command_terms[1]);
-                    } else {
+                    } else
+                    {
                         System.out.println("Invalid sort attribute. Please try again.");
                     }
                     break;
@@ -103,9 +128,9 @@ public class FileExplorer {
                     System.out.println("Unknown command. Type 'help' for a list of commands.");
                     break;
             }
-            scanner.close();
-        }
-        
+        } while (command_terms[0] != "exit");
+        scanner.close();
+
     }
 
     private static void displayAvailableCommands() {
