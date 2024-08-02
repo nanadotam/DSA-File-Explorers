@@ -2,7 +2,7 @@
  * Represents a file in the file explorer.
  */
 public class File extends FileExplorerElement {
-    private String fileType;
+    private String fileType; //.docx, .pdf etc
 
     /**
      * Constructs a new File with the specified name, date modified, file type, and size.
@@ -42,6 +42,6 @@ public class File extends FileExplorerElement {
      */
     @Override
     public String toString() {
-        return getName() + "." + fileType + " (Modified: " + getDateModified() + ", Size: " + getSize() + ")";
+        return getName() + fileType + " (Modified: " + getDateModified() + ", Size: " + getSize() + ")";
     }
 }
