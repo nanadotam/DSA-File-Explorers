@@ -72,8 +72,9 @@ public class gui {
             try {
                 // Check if file already exists
                 if (!Directory.pathExists(filePath)) {
+                    String filename = JOptionPane.showInputDialog("Enter filename:");
                     // Create file
-                    Directory.createFile(filePath);
+                    Directory.createFile(filePath, filename);
                     JOptionPane.showMessageDialog(null, "File created: " + filePath);
                 } else {
                     JOptionPane.showMessageDialog(null, "File already exists.");
