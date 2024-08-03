@@ -66,7 +66,7 @@ public class FileExplorerGUI {
         jframe.getContentPane().add(BorderLayout.SOUTH, panel);
         jframe.getContentPane().add(BorderLayout.NORTH, menuBar);
         jframe.getContentPane().add(BorderLayout.EAST, rightScrollPane);
-        jframe.getContentPane().setBackground(new Color(255, 251, 0));
+        jframe.getContentPane().setBackground(new Color(255, 255, 255));
         jframe.setVisible(true);
 
         // Add file list display
