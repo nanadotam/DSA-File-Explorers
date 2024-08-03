@@ -69,7 +69,7 @@ public class TerminalWindow extends JFrame implements ActionListener {
                     if (args.length != 2) {
                         outputArea.append("Usage: create_file <file_path>\n");
                     } else {
-                        createFile(args[1]);
+                        createFile(args[1], args[2]);
                     }
                     break;
                 case "create_dir":
