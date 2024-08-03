@@ -34,6 +34,9 @@ public class Directory {
     public static boolean isValidPath(String path) {
         return path != null && !path.trim().isEmpty();
     }
+    
+    
+    // add check where program prompts user to create a file before creating a directory when directory does not exist
 
     /**
      * Creates a file at the specified file path.
@@ -41,22 +44,6 @@ public class Directory {
      * @param destinationPath the file path
      * @param filename        the name of the file
      */
-    // public static void createFile(String destinationPath, String filename) {
-    //     destinationPath = normalizePath(destinationPath);
-
-    //     if (pathExists(destinationPath)) {
-    //         String[] parts = destinationPath.split("/");
-    //         Folder current = root;
-    
-    //         for (int i = 1; i < parts.length; i++) {
-    //             current = findDirectory(current, parts[i]);
-    //             if (current == null) {
-    //                 return;
-    //             }
-    //         }
-    //         current.getContents().add(new File(filename, new Date().toString(), "1KB")); // Random size
-    //     }
-    // }
     public static void createFile(String destinationPath, String filename) {
         destinationPath = normalizePath(destinationPath);
     
@@ -84,20 +71,6 @@ public class Directory {
      *
      * @param dirPath the directory path
      */
-    // public static void createDirectory(String dirPath) {
-    //     dirPath = normalizePath(dirPath);
-
-    //     String[] parts = dirPath.split("/");
-    //     Folder current = root;
-    //     for (int i = 1; i < parts.length; i++) { // Skip "root"
-    //         Folder next = findDirectory(current, parts[i]);
-    //         if (next == null) {
-    //             next = new Folder(parts[i], new Date().toString(), "0KB");
-    //             current.getContents().add(next);
-    //         }
-    //         current = next;
-    //     }
-    // }
     public static void createDirectory(String dirPath) {
         dirPath = normalizePath(dirPath);
     
@@ -236,29 +209,6 @@ public class Directory {
      *
      * @param filePath the file path
      */
-    // public static void deleteFile(String filePath) {
-    //     filePath = normalizePath(filePath);
-    //     if (isFile(filePath)) {
-    //         String[] parts = filePath.split("/");
-    //         Folder current = root;
-    //         for (int i = 1; i < parts.length - 1; i++) { // Skip "root"
-    //             current = findDirectory(current, parts[i]);
-    //             if (current == null) {
-    //                 System.out.println("Invalid path: " + filePath);
-    //                 return;
-    //             }
-    //         }
-    //         File fileToDelete = findFile(current, parts[parts.length - 1]);
-    //         if (fileToDelete != null) {
-    //             current.getContents().remove(fileToDelete);
-    //             System.out.println("File deleted: " + filePath);
-    //         } else {
-    //             System.out.println("File not found: " + filePath);
-    //         }
-    //     } else {
-    //         System.out.println("Invalid file path: " + filePath);
-    //     }
-    // }
     public static void deleteFile(String filePath) {
         filePath = normalizePath(filePath);
         try {
@@ -294,29 +244,6 @@ public class Directory {
      *
      * @param dirPath the directory path
      */
-    // public static void deleteDirectory(String dirPath) {
-    //     dirPath = normalizePath(dirPath);
-
-    //     String[] parts = dirPath.split("/");
-    //     Folder current = root;
-    //     for (int i = 1; i < parts.length; i++) { // Skip "root"
-    //         if (i == parts.length - 1) {
-    //             Folder dirToDel = findDirectory(current, parts[i]);
-    //             if (dirToDel != null) {
-    //                 current.getContents().remove(dirToDel);
-    //                 System.out.println("Directory deleted: " + dirPath);
-    //             } else {
-    //                 System.out.println("Directory not found: " + dirPath);
-    //             }
-    //         } else {
-    //             current = findDirectory(current, parts[i]);
-    //             if (current == null) {
-    //                 System.out.println("Invalid path: " + dirPath);
-    //                 return;
-    //             }
-    //         }
-    //     }
-    // }
     public static void deleteDirectory(String dirPath) {
         dirPath = normalizePath(dirPath);
         try {
@@ -352,64 +279,6 @@ public class Directory {
      * @param sourcePath      the source path
      * @param destinationPath the destination path
      */
-    // public static void moveFileOrDirectory(String sourcePath, String destinationPath) {
-    //     sourcePath = normalizePath(sourcePath);
-    //     destinationPath = normalizePath(destinationPath);
-
-    //     // Validate paths
-    //     if (!isValidPath(sourcePath) || !isValidPath(destinationPath)) {
-    //         System.out.println("Invalid path");
-    //         return;
-    //     }
-
-    //     // Determine if source is file or directory
-    //     boolean isFile = isFile(sourcePath);
-    //     if (!isFile && !pathExists(sourcePath)) {
-    //         System.out.println("Source path does not exist");
-    //         return;
-    //     }
-
-    //     String[] sourceParts = sourcePath.split("/");
-    //     String[] destParts = destinationPath.split("/");
-
-    //     // Navigate to source parent directory
-    //     Folder sourceParent = root;
-    //     for (int i = 1; i < sourceParts.length - 1; i++) { // Skip "root"
-    //         sourceParent = findDirectory(sourceParent, sourceParts[i]);
-    //         if (sourceParent == null) {
-    //             System.out.println("Invalid source path: " + sourcePath);
-    //             return;
-    //         }
-    //     }
-
-    //     // Find source element (file or directory)
-    //     FileExplorerElement sourceElement;
-    //     if (isFile) {
-    //         sourceElement = findFile(sourceParent, sourceParts[sourceParts.length - 1]);
-    //     } else {
-    //         sourceElement = findDirectory(sourceParent, sourceParts[sourceParts.length - 1]);
-    //     }
-
-    //     if (sourceElement == null) {
-    //         System.out.println("Source not found");
-    //         return;
-    //     }
-
-    //     // Navigate to destination parent directory
-    //     Folder destParent = root;
-    //     for (int i = 1; i < destParts.length - 1; i++) { // Skip "root"
-    //         destParent = findDirectory(destParent, destParts[i]);
-    //         if (destParent == null) {
-    //             System.out.println("Invalid destination path: " + destinationPath);
-    //             return;
-    //         }
-    //     }
-
-    //     // Move the element
-    //     sourceParent.getContents().remove(sourceElement);
-    //     destParent.getContents().add(sourceElement);
-    //     System.out.println("Moved " + sourceElement.getName() + " to " + destinationPath);
-    // }
     public static void moveFileOrDirectory(String sourcePath, String destinationPath) {
         sourcePath = normalizePath(sourcePath);
         destinationPath = normalizePath(destinationPath);
@@ -482,13 +351,6 @@ public class Directory {
      * @param value     the value of the attribute
      * @return a list of matching file explorer elements
      */
-    // public static ArrayList<FileExplorerElement> search(String attribute, String value) {
-    //     if (!isValidAttribute(attribute)) {
-    //         System.out.println("Invalid attribute");
-    //         return new ArrayList<>();
-    //     }
-    //     return searchRecursive(root, attribute, value);
-    // }
     public static ArrayList<FileExplorerElement> search(String attribute, String value) {
         try {
             if (!isValidAttribute(attribute)) {
@@ -552,13 +414,6 @@ public class Directory {
      *
      * @param attribute the attribute to sort by
      */
-    // public static void sort(String attribute) {
-    //     if (!isValidAttribute(attribute)) {
-    //         System.out.println("Invalid attribute");
-    //         return;
-    //     }
-    //     sortRecursive(root, attribute);
-    // }
     public static void sort(String attribute) {
         try {
             if (!isValidAttribute(attribute)) {
@@ -601,9 +456,6 @@ public class Directory {
     /**
      * Displays the directory outline.
      */
-    // public static void displayDirectoryOutline() {
-    //     displayDirectoryRecursive(root, 0);
-    // }
     public static void displayDirectoryOutline() {
         try {
             displayDirectoryRecursive(root, 0);
@@ -613,19 +465,6 @@ public class Directory {
         }
     }
     
-
-    // DFS, recursive implementation
-    // private static void displayDirectoryRecursive(Folder current, int level) {
-    //     String indent = " ".repeat(level * 2);
-    //     System.out.println(indent + current.getName() + "/");
-    //     for (FileExplorerElement element : current.getContents()) {
-    //         if (element instanceof Folder) {
-    //             displayDirectoryRecursive((Folder) element, level + 1);
-    //         } else if (element instanceof File) {
-    //             System.out.println(indent + " " + element.getName());
-    //         }
-    //     }
-    // }
     private static void displayDirectoryRecursive(Folder current, int level) {
         try {
             String indent = " ".repeat(level * 2);
@@ -644,23 +483,6 @@ public class Directory {
     }
     
 
-    // public static void tree() {
-    //     treeRecursive(root, "", true);
-    // }
-
-    // private static void treeRecursive(Folder current, String indent, boolean last) {
-    //     System.out.println(indent + (last ? "└── " : "├── ") + current.getName() + "/");
-    //     ArrayList<FileExplorerElement> contents = (ArrayList<FileExplorerElement>) current.getContents();
-    //     for (int i = 0; i < contents.size(); i++) {
-    //         FileExplorerElement element = contents.get(i);
-    //         boolean isLast = (i == contents.size() - 1);
-    //         if (element instanceof Folder) {
-    //             treeRecursive((Folder) element, indent + (last ? "    " : "│   "), isLast);
-    //         } else if (element instanceof File) {
-    //             System.out.println(indent + (last ? "    " : "│   ") + (isLast ? "└── " : "├── ") + element.getName());
-    //         }
-    //     }
-    // }
     public static void tree() {
         try {
             treeRecursive(root, "", true);

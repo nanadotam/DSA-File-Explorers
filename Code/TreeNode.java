@@ -112,21 +112,4 @@ class TreeNode<T> {
     public String toString() {
         return root != null ? root.toString() : "null";
     }
-
-    public static void main(String[] args) {
-        TreeNode<String> root = new TreeNode<>("Root");
-        TreeNode<String> child1 = root.addChild("Child1");
-        TreeNode<String> child2 = root.addChild("Child2");
-        // TreeNode<String> child3 = root.addChild("Child3");
-    
-        child1.addChild("Child1.1");
-        child1.addChild("Child1.2");
-    
-        child2.addChild("Child2.1");
-    
-        root.printTree("");
-        // System.out.println("Siblings of Child2: " + child2.getSiblings());
-        // System.out.println("All descendants of Root: " + root.getAllDescendants());
-    }
-    
 }
