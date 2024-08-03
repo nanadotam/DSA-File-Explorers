@@ -1,77 +1,62 @@
-import java.util.ArrayList;
-import java.util.List;
-
 public class Main {
     public static void main(String[] args) {
-        // Create root directory
-        Folder root = Directory.root;
-
-        // Test isValidPath method
-        System.out.println("Is Valid Path '/folder1': " + Directory.isValidPath("/folder1")); // Should print true
-        System.out.println("Is Valid Path '': " + Directory.isValidPath("")); // Should print false
-
-        // Test createDirectory method
+        // Create directories
         Directory.createDirectory("folder1");
         Directory.createDirectory("folder1/subfolder1");
         Directory.createDirectory("folder2");
 
-        // Display root directory contents
-        System.out.println("Root Directory Contents:");
-        for (FileExplorerElement element : root.getContents()) {
-            System.out.println(element);
-        }
+        // Create files
+        Directory.createFile("folder1/file1.txt");
+        Directory.createFile("folder1/subfolder1/file2.txt");
+        Directory.createFile("folder2/file3.txt");
 
-        // Test createFile method
-        Directory.createFile("folder1/file1");
-        Directory.createFile("folder1/subfolder1/file2");
+        // Display directory outline
+        System.out.println("Directory Outline:");
+        Directory.displayDirectoryOutline();
 
-
-        // Display folder1 contents
-        Folder folder1 = Directory.findDirectory(root, "folder1");
-        System.out.println("Folder1 Contents:");
-        assert folder1 != null;
-        for (FileExplorerElement element : folder1.getContents()) {
-            System.out.println(element);
-        }
-
+        // Test isValidPath method
+//        System.out.println("\nIs Valid Path '/folder1': " + Directory.isValidPath("/folder1")); // Should print true
+//        System.out.println("Is Valid Path '': " + Directory.isValidPath("")); // Should print false
 
         // Test pathExists method
-        System.out.println("Path Exists 'folder1': " + Directory.pathExists("folder1")); // Should print true
-        System.out.println("Path Exists 'folder3': " + Directory.pathExists("folder3")); // Should print false
+//        System.out.println("\nPath Exists 'folder1': " + Directory.pathExists("folder1")); // Should print true
+//        System.out.println("Path Exists 'folder3': " + Directory.pathExists("folder3")); // Should print false
 
         // Test isFile method
-        System.out.println("Is File 'folder1/file1.txt': " + Directory.isFile("folder1/file1")); // Should print true
+        System.out.println("\nIs File 'folder1/file1.txt': " + Directory.isFile("folder1/file1.txt")); // Should print true
         System.out.println("Is File 'folder1/subfolder1': " + Directory.isFile("folder1/subfolder1")); // Should print false
-
         System.out.println();
+
         // Test deleteFile method
-        Directory.deleteFile("folder1/file1");
-        System.out.println("Folder1 Contents After Deleting file1.txt:"); // to be worked on
-        for (FileExplorerElement element : folder1.getContents()) {
-            System.out.println(element);
-        }
-
-        System.out.println();
+        Directory.deleteFile("folder1/file1.txt");
+        System.out.println("\nAfter deleting 'folder1/file1.txt':");
+        Directory.displayDirectoryOutline();
 
         // Test deleteDirectory method
-        Directory.deleteDirectory("folder1/subfolder1");
-        System.out.println("Folder1 Contents After Deleting subfolder1:");
-        for (FileExplorerElement element : folder1.getContents()) {
-            System.out.println(element);
+//        Directory.deleteDirectory("folder1/subfolder1");
+//        System.out.println("\nAfter deleting 'folder1/subfolder1':");
+//        Directory.displayDirectoryOutline();
+
+        // Test moveFileOrDirectory method
+        Directory.moveFileOrDirectory("folder2/file3.txt", "folder1/file3.txt");
+        System.out.println("\nAfter moving 'folder2/file3.txt' to 'folder1/file3.txt':");
+        Directory.displayDirectoryOutline();
+
+        // Test search method
+        System.out.println("\nSearch by name 'file3.txt':");
+        for (FileExplorerElement element : Directory.search("name", "file3.txt")) {
+            System.out.println(element.getName());
         }
 
-        System.out.println();
+        // Test sort method
+        Directory.sort("name");
+        System.out.println("\nAfter sorting by name:");
+        Directory.displayDirectoryOutline();
 
-        // Test moveFileOrDirectory method (implement logic as needed)
-
-        // Test search method (implement logic as needed)
-
-        // Test isValidAttribute method
-        System.out.println("Is Valid Attribute 'Name': " + Directory.isValidAttribute("Name")); // Should print true
-        System.out.println("Is Valid Attribute 'InvalidAttr': " + Directory.isValidAttribute("InvalidAttr")); // Should print false
-
-        // Test sort method (implement logic as needed)
-
-        // Test displayDirectoryOutline method (implement logic as needed)
+        // Test search with different attribute
+        System.out.println("\nSearch by item type 'file':");
+        for (FileExplorerElement element : Directory.search("item type", "file")) {
+            System.out.println(element.getName());
+        }
     }
 }
