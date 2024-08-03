@@ -11,7 +11,7 @@ public class TerminalWindow extends JFrame implements ActionListener {
     private JButton executeButton;
 
     public TerminalWindow() {
-        setTitle("Custom Terminal");
+        setTitle("Custom Terminal - File Explorers");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -67,7 +67,7 @@ public class TerminalWindow extends JFrame implements ActionListener {
             switch (cmd) {
                 case "create_file":
                     if (args.length != 2) {
-                        outputArea.append("Usage: create_file <file_path>\n");
+                        outputArea.append("Usage: create_file <file_path> <filename>\n");
                     } else {
                         createFile(args[1], args[2]);
                     }
@@ -187,7 +187,7 @@ public class TerminalWindow extends JFrame implements ActionListener {
 
     private void showUsage() {
         outputArea.append("Usage:\n");
-        outputArea.append("  create_file <file_path>: Create a new file at the specified path.\n");
+        outputArea.append("  create_file <file_path> <filename>: Create a new file at the specified path.\n");
         outputArea.append("  create_dir <dir_path>: Create a new directory at the specified path.\n");
         outputArea.append("  delete <path>: Delete the file or directory at the specified path.\n");
         outputArea.append("  move <source_path> <destination_path>: Move a file or directory from the source path to the destination path.\n");
