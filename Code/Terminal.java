@@ -70,9 +70,9 @@ public class Terminal {
         }
     }
 
-    private static void createFile(String filePath) throws Exception {
+    private static void createFile(String filePath, String filename) throws Exception {
         if (!Directory.pathExists(filePath)) {
-            Directory.createFile(filePath);
+            Directory.createFile(filePath, filename);
             System.out.println("File created: " + filePath);
         } else {
             System.out.println("File already exists: " + filePath);
