@@ -93,6 +93,7 @@ public class FileExplorerTerminal {
 
         String[] command_terms;
         do {
+            System.out.print("(cmd)> ");
             user_input = scanner.nextLine();
             command_terms = user_input.split(" ");
 
