@@ -365,4 +365,22 @@ public class Directory {
             }
         }
     }
+
+    public static void tree() {
+        treeRecursive(root, "", true);
+    }
+
+    private static void treeRecursive(Folder current, String indent, boolean last) {
+        System.out.println(indent + (last ? "└── " : "├── ") + current.getName() + "/");
+        ArrayList<FileExplorerElement> contents = (ArrayList<FileExplorerElement>) current.getContents();
+        for (int i = 0; i < contents.size(); i++) {
+            FileExplorerElement element = contents.get(i);
+            boolean isLast = (i == contents.size() - 1);
+            if (element instanceof Folder) {
+                treeRecursive((Folder) element, indent + (last ? "    " : "│   "), isLast);
+            } else if (element instanceof File) {
+                System.out.println(indent + (last ? "    " : "│   ") + (isLast ? "└── " : "├── ") + element.getName());
+            }
+        }
+    }
 }
