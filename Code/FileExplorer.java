@@ -25,6 +25,7 @@ public class FileExplorer {
                     if (Directory.isValidPath(command_terms[1]))
                     {
                         Directory.createFile(command_terms[1]);
+                        System.out.println("File created Successfully!");
                     } else
                     {
                         System.out.println("Invalid file path. Please try again.");
@@ -35,6 +36,7 @@ public class FileExplorer {
                     if (Directory.isValidPath(command_terms[1]))
                     {
                         Directory.createDirectory(command_terms[1]);
+                        System.out.println("Directory created Successfully!");
                     } else
                     {
                         System.out.println("Invalid directory path. Please try again.");
@@ -128,7 +130,7 @@ public class FileExplorer {
                     System.out.println("Unknown command. Type 'help' for a list of commands.");
                     break;
             }
-        } while (command_terms[0] != "exit");
+        } while (!command_terms[0].equals("exit"));
         scanner.close();
 
     }
