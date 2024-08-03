@@ -10,3 +10,5 @@ Code/gui2.java
 Code/Terminal.class
 Code/TerminalWindow.class
 Code/FileExplorer.class
+Code/FileExplorerGUI.class
+Code/FileExplorerTerminal.class

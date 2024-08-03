@@ -45,26 +45,31 @@ public class Directory {
      * @param filename        the name of the file
      */
     public static void createFile(String destinationPath, String filename) {
-        destinationPath = normalizePath(destinationPath);
+        if (!destinationPath.equals("root")) {
+            destinationPath = normalizePath(destinationPath);
+        }
     
         try {
-            if (pathExists(destinationPath)) {
-                String[] parts = destinationPath.split("/");
-                Folder current = root;
+            String[] parts = destinationPath.split("/");
+            Folder current = root;
     
+            if (parts.length == 1 && parts[0].equals("root")) {
+                current.getContents().add(new File(filename, new Date().toString(), "1KB"));
+            } else {
                 for (int i = 1; i < parts.length; i++) {
                     current = findDirectory(current, parts[i]);
                     if (current == null) {
+                        System.out.println("Directory does not exist. Create the directory first.");
                         return;
                     }
                 }
-                current.getContents().add(new File(filename, new Date().toString(), "1KB")); // Random size
+                current.getContents().add(new File(filename, new Date().toString(), "1KB"));
             }
         } catch (Exception e) {
             System.out.println("An error occurred while creating the file: " + filename);
             e.printStackTrace();
         }
-    }
+    }    
     
     /**
      * Creates a new folder/directory at the specified directory path.
@@ -105,7 +110,7 @@ public class Directory {
         }
         String[] parts = path.split("/");
         Folder current = root;
-        for (int i = 1; i < parts.length - 1; i++) { // Skip "root"
+        for (int i = 0; i < parts.length; i++) { // Skip "root"
             current = findDirectory(current, parts[i]);
             if (current == null) {
                 return false;
@@ -204,24 +209,118 @@ public class Directory {
     }
 
 
+
     /**
-     * Deletes a file at the specified file path.
+     * Sets the content of a file at the specified file path.
      *
-     * @param filePath the file path
+     * @param filePath The path of the file to set the content for.
+     * @param content The new content to set for the file.
      */
-    public static void deleteFile(String filePath) {
-        filePath = normalizePath(filePath);
+    public static void setContent(String filePath, String content) {
+        if (!filePath.equals("root")) {
+            filePath = normalizePath(filePath);
+        }
+    
         try {
-            if (isFile(filePath)) {
-                String[] parts = filePath.split("/");
-                Folder current = root;
-                for (int i = 1; i < parts.length - 1; i++) { // Skip "root"
+            String[] parts = filePath.split("/");
+            Folder current = root;
+    
+            if (parts.length == 1 && parts[0].equals("root")) {
+                System.out.println("Cannot set content for the root directory.");
+                return;
+            } else {
+                for (int i = 1; i < parts.length - 1; i++) {
                     current = findDirectory(current, parts[i]);
                     if (current == null) {
                         System.out.println("Invalid path: " + filePath);
                         return;
                     }
                 }
+    
+                File file = findFile(current, parts[parts.length - 1]);
+                if (file != null) {
+                    file.setContent(content);
+                    System.out.println("Content set for file: " + filePath);
+                } else {
+                    System.out.println("File not found: " + filePath);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("An error occurred while setting content for the file: " + filePath);
+            e.printStackTrace();
+        }
+    }
+    
+
+    /**
+     * Displays the content of a file specified by the given file path.
+     * If the file path is "root", it indicates the root directory and the content cannot be viewed.
+     * The file path can be a relative or absolute path.
+     * 
+     * @param filePath The path of the file to view its content.
+     */
+    public static void viewContent(String filePath) {
+        if (!filePath.equals("root")) {
+            filePath = normalizePath(filePath);
+        }
+    
+        try {
+            String[] parts = filePath.split("/");
+            Folder current = root;
+    
+            if (parts.length == 1 && parts[0].equals("root")) {
+                System.out.println("Cannot view content for the root directory.");
+                return;
+            } else {
+                for (int i = 1; i < parts.length - 1; i++) {
+                    current = findDirectory(current, parts[i]);
+                    if (current == null) {
+                        System.out.println("Invalid path: " + filePath);
+                        return;
+                    }
+                }
+    
+                File file = findFile(current, parts[parts.length - 1]);
+                if (file != null) {
+                    System.out.println("Content of file " + filePath + ":");
+                    System.out.println(file.viewContent());
+                } else {
+                    System.out.println("File not found: " + filePath);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("An error occurred while viewing content for the file: " + filePath);
+            e.printStackTrace();
+        }
+    }
+    
+
+    /**
+     * Deletes a file at the specified file path.
+     *
+     * @param filePath the file path
+     */
+    public static void deleteFile(String filePath) {
+        if (!filePath.equals("root")) {
+            filePath = normalizePath(filePath);
+        }
+    
+        try {
+            String[] parts = filePath.split("/");
+            Folder current = root;
+    
+            if (parts.length == 1 && parts[0].equals("root")) {
+                System.out.println("Cannot delete the root directory.");
+                return;
+            } else {
+                for (int i = 1; i < parts.length - 1; i++) {
+                    current = findDirectory(current, parts[i]);
+                    if (current == null) {
+                        System.out.println("Invalid path: " + filePath);
+                        return;
+                    }
+                }
+    
                 File fileToDelete = findFile(current, parts[parts.length - 1]);
                 if (fileToDelete != null) {
                     current.getContents().remove(fileToDelete);
@@ -229,14 +328,13 @@ public class Directory {
                 } else {
                     System.out.println("File not found: " + filePath);
                 }
-            } else {
-                System.out.println("Invalid file path: " + filePath);
             }
         } catch (Exception e) {
             System.out.println("An error occurred while deleting the file: " + filePath);
             e.printStackTrace();
         }
     }
+    
     
 
     /**
@@ -245,24 +343,33 @@ public class Directory {
      * @param dirPath the directory path
      */
     public static void deleteDirectory(String dirPath) {
-        dirPath = normalizePath(dirPath);
+        if (!dirPath.equals("root")) {
+            dirPath = normalizePath(dirPath);
+        }
+    
         try {
             String[] parts = dirPath.split("/");
             Folder current = root;
-            for (int i = 1; i < parts.length; i++) { // Skip "root"
-                if (i == parts.length - 1) {
-                    Folder dirToDel = findDirectory(current, parts[i]);
-                    if (dirToDel != null) {
-                        current.getContents().remove(dirToDel);
-                        System.out.println("Directory deleted: " + dirPath);
+    
+            if (parts.length == 1 && parts[0].equals("root")) {
+                System.out.println("Cannot delete the root directory.");
+                return;
+            } else {
+                for (int i = 1; i < parts.length; i++) {
+                    if (i == parts.length - 1) {
+                        Folder dirToDel = findDirectory(current, parts[i]);
+                        if (dirToDel != null) {
+                            current.getContents().remove(dirToDel);
+                            System.out.println("Directory deleted: " + dirPath);
+                        } else {
+                            System.out.println("Directory not found: " + dirPath);
+                        }
                     } else {
-                        System.out.println("Directory not found: " + dirPath);
-                    }
-                } else {
-                    current = findDirectory(current, parts[i]);
-                    if (current == null) {
-                        System.out.println("Invalid path: " + dirPath);
-                        return;
+                        current = findDirectory(current, parts[i]);
+                        if (current == null) {
+                            System.out.println("Invalid path: " + dirPath);
+                            return;
+                        }
                     }
                 }
             }
@@ -270,8 +377,7 @@ public class Directory {
             System.out.println("An error occurred while deleting the directory: " + dirPath);
             e.printStackTrace();
         }
-    }
-    
+    }    
 
     /**
      * Moves a file or directory from the source path to the destination path.
@@ -280,10 +386,19 @@ public class Directory {
      * @param destinationPath the destination path
      */
     public static void moveFileOrDirectory(String sourcePath, String destinationPath) {
-        sourcePath = normalizePath(sourcePath);
-        destinationPath = normalizePath(destinationPath);
+        if (!sourcePath.equals("root")) {
+            sourcePath = normalizePath(sourcePath);
+        }
+        if (!destinationPath.equals("root")) {
+            destinationPath = normalizePath(destinationPath);
+        }
     
         try {
+            if (sourcePath.equals("root")) {
+                System.out.println("Cannot move the root directory.");
+                return;
+            }
+    
             // Validate paths
             if (!isValidPath(sourcePath) || !isValidPath(destinationPath)) {
                 System.out.println("Invalid path");
@@ -342,6 +457,7 @@ public class Directory {
             e.printStackTrace();
         }
     }
+    
     
 
     /**
@@ -507,6 +623,34 @@ public class Directory {
             }
         } catch (Exception e) {
             System.out.println("An error occurred while displaying the tree structure");
+            e.printStackTrace();
+        }
+    }
+
+    public static void populateDefaultStructure() {
+        try {
+            // Create default folders
+            String[] folders = {"computer", "networks", "trash_bin", "documents", "images", "apps", "school"};
+            for (String folder : folders) {
+                createDirectory("root/" + folder);
+            }
+
+            // Create default files
+            createFile("root", "system.info");
+            createFile("root/documents", "Valerie.c25");
+            createFile("root/documents", "Amoako.c26");
+            createFile("root/documents", "Ewura Abena.c25");
+            createFile("root/documents", "Ben Charles.c25");
+            createFile("root/school", "SummaCumLaude.GPA");
+
+            // Add content to specific files
+            Folder rootFolder = root;
+            File systemInfo = findFile(rootFolder, "system.info");
+            if (systemInfo != null) {
+                systemInfo.setContent("Created by File Explorers: Valerie, Amoako, Ewura Abena, Ben Charles");
+            }
+        } catch (Exception e) {
+            System.out.println("An error occurred while populating the default structure.");
             e.printStackTrace();
         }
     }

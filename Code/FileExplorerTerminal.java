@@ -1,9 +1,11 @@
 import java.util.Scanner;
 import java.util.ArrayList;
 
-public class FileExplorer {
+public class FileExplorerTerminal {
 
     public static void main(String[] args) {
+        Directory.populateDefaultStructure();  // Populate the directory with default folders and files
+        
         if (args.length > 0) {
             handleCommandLineArgs(args);
         } else {
@@ -27,6 +29,13 @@ public class FileExplorer {
                         System.out.println("Usage: create_dir <dir_path>");
                     } else {
                         createDirectory(args[1]);
+                    }
+                    break;
+                case "view_content":
+                    if (args.length != 2) {
+                        System.out.println("Usage: view_content <file_path>");
+                    } else {
+                        viewContent(args[1]);
                     }
                     break;
                 case "delete":
@@ -94,8 +103,12 @@ public class FileExplorer {
                         break;
                     case "create_file":
                         if (command_terms.length == 3 && Directory.isValidPath(command_terms[1])) {
-                            Directory.createFile(command_terms[1], command_terms[2]);
-                            System.out.println("File created Successfully!");
+                            if (!Directory.pathExists(command_terms[1])) {
+                                System.out.println("Directory does not exist. Create the directory first.");
+                            } else {
+                                Directory.createFile(command_terms[1], command_terms[2]);
+                                System.out.println("File created Successfully!");
+                            }
                         } else {
                             System.out.println("Invalid command or file path. Please try again.");
                         }
@@ -108,6 +121,13 @@ public class FileExplorer {
                             System.out.println("Invalid command or directory path. Please try again.");
                         }
                         break;
+                    case "view_content":
+                        if (command_terms.length == 2) {
+                            Directory.viewContent(command_terms[1]);
+                        } else {
+                            System.out.println("Invalid command or file path. Please try again.");
+                        }
+                    break;
                     case "delete":
                         if (command_terms.length == 2 && Directory.isValidPath(command_terms[1])) {
                             delete(command_terms[1]);
@@ -155,9 +175,6 @@ public class FileExplorer {
 
     private static void createFile(String filePath, String filename) throws Exception {
         Directory.createFile(filePath, filename);
-        // System.out.println("File created: " + filePath);
-            // System.out.println("File already exists: " + filePath);
-        // }
     }
 
     private static void createDirectory(String dirPath) throws Exception {
@@ -167,6 +184,10 @@ public class FileExplorer {
         } else {
             System.out.println("Directory already exists: " + dirPath);
         }
+    }
+
+    private static void viewContent(String filePath) throws Exception {
+        Directory.viewContent(filePath);
     }
 
     private static void delete(String path) throws Exception {
@@ -216,23 +237,26 @@ public class FileExplorer {
         System.out.println("Usage:");
         System.out.println("  create_file <file_path> <filename>: Create a new file at the specified path.");
         System.out.println("  create_dir <dir_path>: Create a new directory at the specified path.");
+        System.out.println("  view_content <file_path>: View the content of a specified file.");
         System.out.println("  delete <path>: Delete the file or directory at the specified path.");
         System.out.println("  move <source_path> <destination_path>: Move a file or directory from the source path to the destination path.");
         System.out.println("  search <attribute> <value>: Search for files or directories based on a specified attribute and value.");
         System.out.println("  sort <attribute>: Sort files and directories by the specified attribute.");
         System.out.println("  show_structure: Display the current directory and file structure in a tree format.");
     }
+    
 
     private static void displayAvailableCommands() {
         System.out.println("Available commands:");
         System.out.println("help");
         System.out.println("create_file <file_path> <filename>");
         System.out.println("create_dir <dir_path>");
+        System.out.println("view_content <file_path>");
         System.out.println("delete <path>");
         System.out.println("move <source_path> <destination_path>");
         System.out.println("search <attribute> <value>");
         System.out.println("sort <attribute>");
         System.out.println("show_structure");
         System.out.println("exit");
-    }
+    }    
 }

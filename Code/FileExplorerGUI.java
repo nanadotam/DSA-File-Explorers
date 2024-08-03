@@ -3,11 +3,9 @@ import java.awt.*;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+// import java.util.ArrayList;
 
-public class gui {
+public class FileExplorerGUI {
 
     public static void main(String args[]) {
         // Create the Frame
@@ -24,15 +22,21 @@ public class gui {
         menuBar.add(helpMenu);
 
         // Create menu items for FILE menu
-        JMenuItem fileMenu1 = new JMenuItem("New file");
-        JMenuItem fileMenu2 = new JMenuItem("Delete");
-        JMenuItem fileMenu3 = new JMenuItem("Move file");
-        JMenuItem fileMenu4 = new JMenuItem("Save As");
+        JMenuItem fileMenu1 = new JMenuItem("New File");
+        JMenuItem fileMenu2 = new JMenuItem("New Folder");
+        JMenuItem fileMenu3 = new JMenuItem("Delete");
+        JMenuItem fileMenu4 = new JMenuItem("Move File");
+        JMenuItem fileMenu5 = new JMenuItem("Save As");
+        JMenuItem fileMenu6 = new JMenuItem("Search");
+        JMenuItem fileMenu7 = new JMenuItem("Sort");
 
         fileMenu.add(fileMenu1);
         fileMenu.add(fileMenu2);
         fileMenu.add(fileMenu3);
         fileMenu.add(fileMenu4);
+        fileMenu.add(fileMenu5);
+        fileMenu.add(fileMenu6);
+        fileMenu.add(fileMenu7);
 
         // Text Area at the Center
         JTextArea textArea = new JTextArea();
@@ -43,7 +47,6 @@ public class gui {
         JPanel panel = new JPanel();
         JLabel label = new JLabel("Please Enter Text");
         JTextField textField = new JTextField(30); // accepts up to 30 characters
-        JButton btn_enter = new JButton("Enter");
         JButton btn_refresh = new JButton("Refresh");
 
         panel.add(label); // Components Added using Flow Layout
@@ -59,33 +62,42 @@ public class gui {
 
         // Adding Action Listeners
         fileMenu1.addActionListener(e -> createNewFile());
-        fileMenu2.addActionListener(e -> deleteFile());
-        fileMenu3.addActionListener(e -> moveFile());
-        fileMenu4.addActionListener(e -> saveAsFile(textArea));
+        fileMenu2.addActionListener(e -> createNewFolder());
+        fileMenu3.addActionListener(e -> deleteFile());
+        fileMenu4.addActionListener(e -> moveFile());
+        fileMenu5.addActionListener(e -> saveAsFile(textArea));
+        fileMenu6.addActionListener(e -> searchFiles());
+        fileMenu7.addActionListener(e -> sortFiles());
 
         btn_refresh.addActionListener(e -> refreshFileExplorer());
     }
-    
+
     private static void createNewFile() {
         String filePath = JOptionPane.showInputDialog("Enter file path:");
         if (filePath != null && !filePath.isEmpty()) {
             try {
-                // Check if file already exists
-                if (!Directory.pathExists(filePath)) {
-                    String filename = JOptionPane.showInputDialog("Enter filename:");
-                    // Create file
-                    Directory.createFile(filePath, filename);
-                    JOptionPane.showMessageDialog(null, "File created: " + filePath);
-                } else {
-                    JOptionPane.showMessageDialog(null, "File already exists.");
-                }
+                String filename = JOptionPane.showInputDialog("Enter filename:");
+                Directory.createFile(filePath, filename);
+                JOptionPane.showMessageDialog(null, "File created: " + filePath);
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "An error occurred.");
                 e.printStackTrace();
             }
         }
     }
-    
+
+    private static void createNewFolder() {
+        String dirPath = JOptionPane.showInputDialog("Enter directory path:");
+        if (dirPath != null && !dirPath.isEmpty()) {
+            try {
+                Directory.createDirectory(dirPath);
+                JOptionPane.showMessageDialog(null, "Directory created: " + dirPath);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "An error occurred.");
+                e.printStackTrace();
+            }
+        }
+    }
 
     private static void deleteFile() {
         String filePath = JOptionPane.showInputDialog("Enter file path to delete:");
@@ -127,6 +139,41 @@ public class gui {
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(null, "An error occurred while saving the file.");
                 ex.printStackTrace();
+            }
+        }
+    }
+
+    private static void searchFiles() {
+        String attribute = JOptionPane.showInputDialog("Enter search attribute (name, size, item type, date modified):");
+        String value = JOptionPane.showInputDialog("Enter search value:");
+        if (attribute != null && !attribute.isEmpty() && value != null && !value.isEmpty()) {
+            try {
+                java.util.List<FileExplorerElement> results = Directory.search(attribute, value);
+                if (results.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "No results found for " + attribute + " = " + value);
+                } else {
+                    StringBuilder resultMessage = new StringBuilder("Search results:\n");
+                    for (FileExplorerElement element : results) {
+                        resultMessage.append(element.getName()).append("\n");
+                    }
+                    JOptionPane.showMessageDialog(null, resultMessage.toString());
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "An error occurred while searching.");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static void sortFiles() {
+        String attribute = JOptionPane.showInputDialog("Enter sort attribute (name, size, item type, date modified):");
+        if (attribute != null && !attribute.isEmpty()) {
+            try {
+                Directory.sort(attribute);
+                JOptionPane.showMessageDialog(null, "Files and directories sorted by " + attribute);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "An error occurred while sorting.");
+                e.printStackTrace();
             }
         }
     }
