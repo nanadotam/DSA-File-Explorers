@@ -1,16 +1,31 @@
 import java.util.ArrayList;
 import java.util.Date;
 
-
 /**
  * Represents the directory structure and provides methods to manipulate it.
  */
 public class Directory {
 
     static Folder root = new Folder("root", new Date().toString(), "0KB");
-    // Should be private later on, made public for testing
 
-    /** TESTED
+    /**
+     * Normalizes the given path to ensure it starts with root.
+     *
+     * @param path the path to normalize
+     * @return the normalized path starting with root
+     */
+    private static String normalizePath(String path) {
+        if (path == null || path.trim().isEmpty()) {
+            return "root";
+        }
+        path = path.trim();
+        if (path.startsWith("root/")) {
+            return path;
+        }
+        return "root/" + path;
+    }
+
+    /**
      * Checks if the given path is valid.
      *
      * @param path the path to validate
@@ -20,49 +35,54 @@ public class Directory {
         return path != null && !path.trim().isEmpty();
     }
 
-    /** TESTED
+    /**
      * Creates a file at the specified file path.
      *
-     * @param filePath the file path
+     * @param destinationPath the file path
+     * @param filename        the name of the file
      */
     public static void createFile(String destinationPath, String filename) {
+        destinationPath = normalizePath(destinationPath);
+
         if (pathExists(destinationPath)) {
             String[] parts = destinationPath.split("/");
             Folder current = root;
     
-        for (int i = 0; i < parts.length - 1; i++) {
-            current = findDirectory(current, parts[i]);
-            if (current == null) {
-                return;
+            for (int i = 1; i < parts.length - 1; i++) {
+                current = findDirectory(current, parts[i]);
+                if (current == null) {
+                    return;
+                }
             }
-        }
-        current.getContents().add(new File(filename, new Date().toString(), "1KB")); //Random
+            current.getContents().add(new File(filename, new Date().toString(), "1KB")); // Random size
         }
     }
 
-    /** TESTED
+    /**
      * Creates a new folder/directory at the specified directory path.
      *
      * @param dirPath the directory path
      */
     public static void createDirectory(String dirPath) {
+        dirPath = normalizePath(dirPath);
+
         String[] parts = dirPath.split("/");
         Folder current = root;
-        for (String part : parts) {
-            Folder next = findDirectory(current, part);
+        for (int i = 1; i < parts.length; i++) { // Skip "root"
+            Folder next = findDirectory(current, parts[i]);
             if (next == null) {
-                next = new Folder(part, new Date().toString(), "0KB");
+                next = new Folder(parts[i], new Date().toString(), "0KB");
                 current.getContents().add(next);
             }
             current = next;
         }
     }
 
-    /** UNTESTED
+    /**
      * Finds a directory with the given name in the specified folder.
      *
      * @param current the current folder
-     * @param name the name of the directory to find
+     * @param name    the name of the directory to find
      * @return the found directory, or null if not found
      */
     public static Folder findDirectory(Folder current, String name) {
@@ -74,20 +94,21 @@ public class Directory {
         return null;
     }
 
-    /** TESTED
+    /**
      * Checks if the specified path exists.
      *
      * @param path the path to check
      * @return true if the path exists, false otherwise
      */
     public static boolean pathExists(String path) {
+        path = normalizePath(path);
         if (!isValidPath(path)) {
             return false;
         }
         String[] parts = path.split("/");
         Folder current = root;
-        for (String part : parts) {
-            current = findDirectory(current, part);
+        for (int i = 1; i < parts.length; i++) { // Skip "root"
+            current = findDirectory(current, parts[i]);
             if (current == null) {
                 return false;
             }
@@ -102,14 +123,15 @@ public class Directory {
      * @return true if the path is a file, false otherwise
      */
     public static boolean isFile(String path) {
-        if (!isValidPath(path)) {
+        path = normalizePath(path);
+        if (!isValidPath(path) || !pathExists(path)) {
             return false;
         }
     
         String[] parts = path.split("/");
         Folder current = root;
     
-        for (int i = 0; i < parts.length - 1; i++) {
+        for (int i = 1; i < parts.length - 1; i++) { // Skip "root"
             current = findDirectory(current, parts[i]);
             if (current == null) {
                 return false;
@@ -118,23 +140,19 @@ public class Directory {
     
         // Check if the last part is a file
         String lastPart = parts[parts.length - 1];
-        for (FileExplorerElement element : 
-        
-        
-        current.getContents()) {
+        for (FileExplorerElement element : current.getContents()) {
             if (element instanceof File && element.getName().equals(lastPart)) {
                 return true;
             }
         }
-        return false;   
+        return false;
     }
-    
 
     /**
      * Finds a file with the given name in the specified folder.
      *
      * @param current the current folder
-     * @param name the name of the file to find
+     * @param name    the name of the file to find
      * @return the found file, or null if not found
      */
     public static File findFile(Folder current, String name) {
@@ -145,16 +163,18 @@ public class Directory {
         }
         return null;
     }
+
     /**
      * Deletes a file at the specified file path.
      *
      * @param filePath the file path
      */
     public static void deleteFile(String filePath) {
+        filePath = normalizePath(filePath);
         if (isFile(filePath)) {
             String[] parts = filePath.split("/");
             Folder current = root;
-            for (int i = 0; i < parts.length - 1; i++) {
+            for (int i = 1; i < parts.length - 1; i++) { // Skip "root"
                 current = findDirectory(current, parts[i]);
                 if (current == null) {
                     System.out.println("Invalid path: " + filePath);
@@ -179,9 +199,11 @@ public class Directory {
      * @param dirPath the directory path
      */
     public static void deleteDirectory(String dirPath) {
+        dirPath = normalizePath(dirPath);
+
         String[] parts = dirPath.split("/");
         Folder current = root;
-        for (int i = 0; i < parts.length; i++) {
+        for (int i = 1; i < parts.length; i++) { // Skip "root"
             if (i == parts.length - 1) {
                 Folder dirToDel = findDirectory(current, parts[i]);
                 if (dirToDel != null) {
@@ -199,13 +221,17 @@ public class Directory {
             }
         }
     }
- /**
+
+    /**
      * Moves a file or directory from the source path to the destination path.
      *
-     * @param sourcePath the source path
+     * @param sourcePath      the source path
      * @param destinationPath the destination path
      */
     public static void moveFileOrDirectory(String sourcePath, String destinationPath) {
+        sourcePath = normalizePath(sourcePath);
+        destinationPath = normalizePath(destinationPath);
+
         // Validate paths
         if (!isValidPath(sourcePath) || !isValidPath(destinationPath)) {
             System.out.println("Invalid path");
@@ -224,7 +250,7 @@ public class Directory {
 
         // Navigate to source parent directory
         Folder sourceParent = root;
-        for (int i = 0; i < sourceParts.length - 1; i++) {
+        for (int i = 1; i < sourceParts.length - 1; i++) { // Skip "root"
             sourceParent = findDirectory(sourceParent, sourceParts[i]);
             if (sourceParent == null) {
                 System.out.println("Invalid source path: " + sourcePath);
@@ -247,7 +273,7 @@ public class Directory {
 
         // Navigate to destination parent directory
         Folder destParent = root;
-        for (int i = 0; i < destParts.length - 1; i++) {
+        for (int i = 1; i < destParts.length - 1; i++) { // Skip "root"
             destParent = findDirectory(destParent, destParts[i]);
             if (destParent == null) {
                 System.out.println("Invalid destination path: " + destinationPath);
@@ -265,7 +291,8 @@ public class Directory {
      * Searches for files or directories based on the specified attribute and value.
      *
      * @param attribute the attribute to search by
-     * @param value the value of the attribute
+     * @param value     the value of the attribute
+     * @return a list of matching file explorer elements
      */
     public static ArrayList<FileExplorerElement> search(String attribute, String value) {
         if (!isValidAttribute(attribute)) {
@@ -331,7 +358,7 @@ public class Directory {
         sortRecursive(root, attribute);
     }
 
-    //DFS, recursive implementation
+    // DFS, recursive implementation
     private static void sortRecursive(Folder current, String attribute) {
         current.getContents().sort((e1, e2) -> compareByAttribute(e1, e2, attribute));
         for (FileExplorerElement element : current.getContents()) {
@@ -363,7 +390,7 @@ public class Directory {
         displayDirectoryRecursive(root, 0);
     }
 
-    //DFS, recursive implementation
+    // DFS, recursive implementation
     private static void displayDirectoryRecursive(Folder current, int level) {
         String indent = " ".repeat(level * 2);
         System.out.println(indent + current.getName() + "/");
