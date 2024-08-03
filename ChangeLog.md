@@ -26,6 +26,9 @@
 ### FileExplorer.java
 - Changed from a while loop to do - while loop to enable scanner close properly
 
+- Changed equals operation in while to prevent issues
+- added success messages 
+
 
 ## Testing:
 
@@ -34,6 +37,13 @@
 - File - Passed Tests
 - FileExplorerElement - abstract - Passed Tests
 - Directory
-  - pathExists: not working as expected
-  - isFile: not working as expected
-  - isValidAttribute : not working as expected
+  - pathExists: Passed Tests
+  - isValidAttribute : Passed Tests
+  - **moveFileOrDirectory**: cant be determined yet 
+  - **isFile**: not working as expected
+  - **search**: not working as expected
+  - **sort**: cant be determined yet
+  - **deleteFile**: not working as expected
+
+  - cant be determined yet = requires files to be displayed in outline
+  - not working as expected = output does not match expected in main.java
