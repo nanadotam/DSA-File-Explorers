@@ -48,7 +48,7 @@ public class Directory {
             String[] parts = destinationPath.split("/");
             Folder current = root;
     
-            for (int i = 1; i < parts.length - 1; i++) {
+            for (int i = 1; i < parts.length; i++) {
                 current = findDirectory(current, parts[i]);
                 if (current == null) {
                     return;
@@ -131,7 +131,7 @@ public class Directory {
         String[] parts = path.split("/");
         Folder current = root;
     
-        for (int i = 1; i < parts.length - 1; i++) { // Skip "root"
+        for (int i = 1; i < parts.length; i++) { // Skip "root"
             current = findDirectory(current, parts[i]);
             if (current == null) {
                 return false;
