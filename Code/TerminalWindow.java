@@ -124,9 +124,9 @@ public class TerminalWindow extends JFrame implements ActionListener {
         }
     }
 
-    private void createFile(String filePath) throws Exception {
+    private void createFile(String filePath, String filename) throws Exception {
         if (!Directory.pathExists(filePath)) {
-            Directory.createFile(filePath);
+            Directory.createFile(filePath, filename);
             outputArea.append("File created: " + filePath + "\n");
         } else {
             outputArea.append("File already exists: " + filePath + "\n");

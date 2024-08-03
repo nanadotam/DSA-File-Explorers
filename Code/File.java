@@ -12,9 +12,10 @@ public class File extends FileExplorerElement {
      * @param fileType the type of the file
      * @param size the size of the file
      */
-    public File(String name, String dateModified, String fileType, String size) {
+    public File(String name, String dateModified, String size) {
         super(name, dateModified, size);
-        this.fileType = fileType;
+        String[] nameParts = name.split(".");
+        this.fileType = nameParts[nameParts.length - 1];
     }
 
     /**
