@@ -13,7 +13,7 @@ public class Main {
 
             // Display directory outline
             System.out.println("Directory Outline:");
-            Directory.displayDirectoryOutline();
+            Directory.tree();
 
             // Test isValidPath method
             System.out.println("\nIs Valid Path 'folder1': " + Directory.isValidPath("folder1")); // Should print true
@@ -30,17 +30,17 @@ public class Main {
             // Test deleteFile method
             Directory.deleteFile("folder1/file1.txt");
             System.out.println("\nAfter deleting 'folder1/file1.txt':");
-            Directory.displayDirectoryOutline();
+            Directory.tree();
 
             // Test deleteDirectory method
             Directory.deleteDirectory("folder1/subfolder1");
             System.out.println("\nAfter deleting 'folder1/subfolder1':");
-            Directory.displayDirectoryOutline();
+            Directory.tree();
 
             // Test moveFileOrDirectory method
             Directory.moveFileOrDirectory("folder2/file3.txt", "folder1/file3.txt");
             System.out.println("\nAfter moving 'folder2/file3.txt' to 'folder1/file3.txt':");
-            Directory.displayDirectoryOutline();
+            Directory.tree();
 
             // Test search method
             System.out.println("\nSearch by name 'file3.txt':");
@@ -51,7 +51,7 @@ public class Main {
             // Test sort method
             Directory.sort("name");
             System.out.println("\nAfter sorting by name:");
-            Directory.displayDirectoryOutline();
+            Directory.tree();
 
             // Test search with different attribute
             System.out.println("\nSearch by item type 'file':");
@@ -59,6 +59,7 @@ public class Main {
                 System.out.println(element.getName());
             }
 
+            // Test tree method
             System.out.println();
             Directory.tree();
         } catch (Exception e) {
