@@ -14,7 +14,7 @@ public class File extends FileExplorerElement {
      */
     public File(String name, String dateModified, String size) {
         super(name, dateModified, size);
-        String[] nameParts = name.split(".");
+        String[] nameParts = name.split("\\.");
         this.fileType = nameParts[nameParts.length - 1];
     }
 

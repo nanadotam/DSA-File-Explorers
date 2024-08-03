@@ -6,9 +6,9 @@ public class Main {
         Directory.createDirectory("folder2");
         
         // Create files
-        Directory.createFile("folder1", "file1");
-        Directory.createFile("folder1/subfolder1", "file2");
-        Directory.createFile("folder2", "file3");
+        Directory.createFile("folder1", "file1.txt");
+        Directory.createFile("folder1/subfolder1", "file2.txt");
+        Directory.createFile("folder2", "file3.txt");
         
         // Display directory outline
         System.out.println("Directory Outline:");
@@ -60,6 +60,5 @@ public class Main {
         }
         
         System.out.println();
-        Directory.tree();
     }
 }
