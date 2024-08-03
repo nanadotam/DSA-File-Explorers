@@ -1,17 +1,25 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-// import java.util.ArrayList;
+import java.util.List;
 
 public class FileExplorerGUI {
 
+    private static DefaultListModel<String> fileListModel = new DefaultListModel<>();
+    private static JTextArea rightPaneTextArea = new JTextArea();
+    private static JTextField pathTextField = new JTextField(30);
+
     public static void main(String args[]) {
+        Directory.populateDefaultStructure();  // Populate the directory with default folders and files
+
         // Create the Frame
         JFrame jframe = new JFrame("DSA FILE EXPLORERS");
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        jframe.setSize(600, 400);
+        jframe.setSize(800, 400);
 
         // Create the menu bar
         JMenuBar menuBar = new JMenuBar();
@@ -38,38 +46,69 @@ public class FileExplorerGUI {
         fileMenu.add(fileMenu6);
         fileMenu.add(fileMenu7);
 
+        JMenuItem helpMenu1 = new JMenuItem("Help");
+        helpMenu.add(helpMenu1);
+
         // Text Area at the Center
-        JTextArea textArea = new JTextArea();
-        // Adding a scroll pane
-        JScrollPane scrollPane = new JScrollPane(textArea);
+        rightPaneTextArea.setEditable(false);
+        JScrollPane rightScrollPane = new JScrollPane(rightPaneTextArea);
 
         // Create the panel at bottom and add label, textArea and buttons
         JPanel panel = new JPanel();
-        JLabel label = new JLabel("Please Enter Text");
-        JTextField textField = new JTextField(30); // accepts up to 30 characters
+        JLabel label = new JLabel("Path:");
         JButton btn_refresh = new JButton("Refresh");
 
         panel.add(label); // Components Added using Flow Layout
-        panel.add(textField);
+        panel.add(pathTextField);
         panel.add(btn_refresh);
 
         // Adding Components to the frame.
         jframe.getContentPane().add(BorderLayout.SOUTH, panel);
         jframe.getContentPane().add(BorderLayout.NORTH, menuBar);
-        jframe.getContentPane().add(BorderLayout.CENTER, scrollPane);
+        jframe.getContentPane().add(BorderLayout.EAST, rightScrollPane);
         jframe.getContentPane().setBackground(new Color(255, 251, 0));
         jframe.setVisible(true);
+
+        // Add file list display
+        JList<String> fileList = new JList<>(fileListModel);
+        fileList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 1) {
+                    String selectedValue = fileList.getSelectedValue();
+                    if (selectedValue != null) {
+                        pathTextField.setText(selectedValue);
+                    }
+                } else if (e.getClickCount() == 2) {
+                    String selectedValue = fileList.getSelectedValue();
+                    if (selectedValue != null) {
+                        if (selectedValue.endsWith("/")) {
+                            displayFolderContents(selectedValue);
+                        } else {
+                            displayFileContents(selectedValue);
+                        }
+                    }
+                }
+            }
+        });
+        JScrollPane fileScrollPane = new JScrollPane(fileList);
+        jframe.getContentPane().add(BorderLayout.WEST, fileScrollPane);
 
         // Adding Action Listeners
         fileMenu1.addActionListener(e -> createNewFile());
         fileMenu2.addActionListener(e -> createNewFolder());
         fileMenu3.addActionListener(e -> deleteFile());
         fileMenu4.addActionListener(e -> moveFile());
-        fileMenu5.addActionListener(e -> saveAsFile(textArea));
+        fileMenu5.addActionListener(e -> saveAsFile(rightPaneTextArea));
         fileMenu6.addActionListener(e -> searchFiles());
         fileMenu7.addActionListener(e -> sortFiles());
 
+        helpMenu1.addActionListener(e -> displayHelp());
+
         btn_refresh.addActionListener(e -> refreshFileExplorer());
+
+        // Initial file list population
+        refreshFileList();
     }
 
     private static void createNewFile() {
@@ -77,8 +116,13 @@ public class FileExplorerGUI {
         if (filePath != null && !filePath.isEmpty()) {
             try {
                 String filename = JOptionPane.showInputDialog("Enter filename:");
-                Directory.createFile(filePath, filename);
-                JOptionPane.showMessageDialog(null, "File created: " + filePath);
+                if (Directory.pathExists(filePath)) {
+                    Directory.createFile(filePath, filename);
+                    JOptionPane.showMessageDialog(null, "File created: " + filePath);
+                    refreshFileList();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Directory does not exist. Create the directory first.");
+                }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "An error occurred.");
                 e.printStackTrace();
@@ -92,6 +136,7 @@ public class FileExplorerGUI {
             try {
                 Directory.createDirectory(dirPath);
                 JOptionPane.showMessageDialog(null, "Directory created: " + dirPath);
+                refreshFileList();
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "An error occurred.");
                 e.printStackTrace();
@@ -103,8 +148,16 @@ public class FileExplorerGUI {
         String filePath = JOptionPane.showInputDialog("Enter file path to delete:");
         if (filePath != null && !filePath.isEmpty()) {
             try {
-                Directory.deleteFile(filePath);
-                JOptionPane.showMessageDialog(null, "Deleted the file: " + filePath);
+                if (Directory.isFile(filePath)) {
+                    Directory.deleteFile(filePath);
+                    JOptionPane.showMessageDialog(null, "Deleted the file: " + filePath);
+                } else if (Directory.pathExists(filePath)) {
+                    Directory.deleteDirectory(filePath);
+                    JOptionPane.showMessageDialog(null, "Deleted the directory: " + filePath);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Path does not exist: " + filePath);
+                }
+                refreshFileList();
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Failed to delete the file.");
                 e.printStackTrace();
@@ -119,6 +172,7 @@ public class FileExplorerGUI {
             try {
                 Directory.moveFileOrDirectory(sourcePath, destPath);
                 JOptionPane.showMessageDialog(null, "File moved to: " + destPath);
+                refreshFileList();
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "An error occurred.");
                 e.printStackTrace();
@@ -136,6 +190,7 @@ public class FileExplorerGUI {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
                 textArea.write(writer);
                 JOptionPane.showMessageDialog(null, "File saved: " + fileToSave.getAbsolutePath());
+                refreshFileList();
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(null, "An error occurred while saving the file.");
                 ex.printStackTrace();
@@ -148,7 +203,7 @@ public class FileExplorerGUI {
         String value = JOptionPane.showInputDialog("Enter search value:");
         if (attribute != null && !attribute.isEmpty() && value != null && !value.isEmpty()) {
             try {
-                java.util.List<FileExplorerElement> results = Directory.search(attribute, value);
+                List<FileExplorerElement> results = Directory.search(attribute, value);
                 if (results.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "No results found for " + attribute + " = " + value);
                 } else {
@@ -156,7 +211,7 @@ public class FileExplorerGUI {
                     for (FileExplorerElement element : results) {
                         resultMessage.append(element.getName()).append("\n");
                     }
-                    JOptionPane.showMessageDialog(null, resultMessage.toString());
+                    rightPaneTextArea.setText(resultMessage.toString());
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "An error occurred while searching.");
@@ -171,6 +226,7 @@ public class FileExplorerGUI {
             try {
                 Directory.sort(attribute);
                 JOptionPane.showMessageDialog(null, "Files and directories sorted by " + attribute);
+                refreshFileList();
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "An error occurred while sorting.");
                 e.printStackTrace();
@@ -179,6 +235,51 @@ public class FileExplorerGUI {
     }
 
     private static void refreshFileExplorer() {
+        refreshFileList();
         JOptionPane.showMessageDialog(null, "File explorer refreshed.");
+    }
+
+    private static void refreshFileList() {
+        fileListModel.clear();
+        addFilesToModel(Directory.root, "");
+    }
+
+    private static void addFilesToModel(Folder folder, String path) {
+        for (FileExplorerElement element : folder.getContents()) {
+            String fullPath = path + "/" + element.getName();
+            fileListModel.addElement(fullPath);
+            if (element instanceof Folder) {
+                addFilesToModel((Folder) element, fullPath);
+            }
+        }
+    }
+
+    private static void displayFolderContents(String folderPath) {
+        rightPaneTextArea.setText("");
+        Folder folder = Directory.findDirectory(Directory.root, folderPath.replaceFirst("/", ""));
+        if (folder != null) {
+            for (FileExplorerElement element : folder.getContents()) {
+                rightPaneTextArea.append(element.getName() + "\n");
+            }
+        }
+    }
+
+    private static void displayFileContents(String filePath) {
+        rightPaneTextArea.setText("");
+        Directory.viewContent(filePath.replaceFirst("/", ""));
+    }
+
+    private static void displayHelp() {
+        rightPaneTextArea.setText(
+            "Available commands:\n" +
+            "1. New File: Create a new file.\n" +
+            "2. New Folder: Create a new folder.\n" +
+            "3. Delete: Delete a file or folder.\n" +
+            "4. Move File: Move a file to a new location.\n" +
+            "5. Save As: Save the content as a new file.\n" +
+            "6. Search: Search for files or folders by attribute.\n" +
+            "7. Sort: Sort files and folders by attribute.\n" +
+            "8. Refresh: Refresh the file explorer view.\n"
+        );
     }
 }
