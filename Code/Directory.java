@@ -10,7 +10,7 @@ public class Directory {
     static Folder root = new Folder("root", new Date().toString(), "0KB");
     // Should be private later on, made public for testing
 
-    /**
+    /** TESTED
      * Checks if the given path is valid.
      *
      * @param path the path to validate
@@ -20,22 +20,28 @@ public class Directory {
         return path != null && !path.trim().isEmpty();
     }
 
-    /**
+    /** TESTED
      * Creates a file at the specified file path.
      *
      * @param filePath the file path
      */
     public static void createFile(String destinationPath, String filename) {
-        Folder current = root;
         if (pathExists(destinationPath)) {
-            // file type will depend on user (import java.util.Scanner?)
-            // file size... (Math.Random? just for the classification purposes)
-            current.getContents().add(new File(filename, new Date().toString(), "1KB"));
+            String[] parts = destinationPath.split("/");
+            Folder current = root;
+    
+        for (int i = 0; i < parts.length - 1; i++) {
+            current = findDirectory(current, parts[i]);
+            if (current == null) {
+                return;
+            }
+        }
+        current.getContents().add(new File(filename, new Date().toString(), "1KB")); //Random
         }
     }
 
-    /**
-     * Creates a directory at the specified directory path.
+    /** TESTED
+     * Creates a new folder/directory at the specified directory path.
      *
      * @param dirPath the directory path
      */
@@ -52,7 +58,7 @@ public class Directory {
         }
     }
 
-    /**
+    /** UNTESTED
      * Finds a directory with the given name in the specified folder.
      *
      * @param current the current folder
@@ -68,7 +74,7 @@ public class Directory {
         return null;
     }
 
-    /**
+    /** TESTED
      * Checks if the specified path exists.
      *
      * @param path the path to check
@@ -110,13 +116,17 @@ public class Directory {
             }
         }
     
-        for (FileExplorerElement element : current.getContents()) {
-            if (element instanceof File && element.getName().equals(parts[parts.length - 1])) {
+        // Check if the last part is a file
+        String lastPart = parts[parts.length - 1];
+        for (FileExplorerElement element : 
+        
+        
+        current.getContents()) {
+            if (element instanceof File && element.getName().equals(lastPart)) {
                 return true;
             }
         }
-    
-        return false;
+        return false;   
     }
     
 
