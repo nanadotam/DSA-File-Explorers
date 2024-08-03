@@ -32,6 +32,8 @@ public class Directory {
             // file type will depend on user (import java.util.Scanner?)
             // file size... (Math.Random? just for the classification purposes)
             current.getContents().add(new File(parts[parts.length - 1], new Date().toString(), "txt", "1KB"));
+        } else {
+            System.out.println("Invalid path: " + filePath);
         }
     }
 
