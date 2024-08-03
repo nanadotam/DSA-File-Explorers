@@ -79,22 +79,6 @@ public class Directory {
     }
 
     /**
-     * Finds a directory with the given name in the specified folder.
-     *
-     * @param current the current folder
-     * @param name    the name of the directory to find
-     * @return the found directory, or null if not found
-     */
-    public static Folder findDirectory(Folder current, String name) {
-        for (FileExplorerElement element : current.getContents()) {
-            if (element.getName().equals(name) && element instanceof Folder) {
-                return (Folder) element;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Checks if the specified path exists.
      *
      * @param path the path to check
@@ -107,13 +91,23 @@ public class Directory {
         }
         String[] parts = path.split("/");
         Folder current = root;
-        for (int i = 1; i < parts.length; i++) { // Skip "root"
+        for (int i = 1; i < parts.length - 1; i++) { // Skip "root"
             current = findDirectory(current, parts[i]);
             if (current == null) {
                 return false;
             }
         }
-        return true;
+        String lastPart = parts[parts.length - 1];
+        // Check if it's a directory
+        if (findDirectory(current, lastPart) != null) {
+            return true;
+        }
+        // Check if it's a file
+        if (findFile(current, lastPart) != null) {
+            return true;
+        }
+
+        return false; // Neither directory nor file was found 
     }
 
     /**
@@ -124,14 +118,14 @@ public class Directory {
      */
     public static boolean isFile(String path) {
         path = normalizePath(path);
-        if (!isValidPath(path) || !pathExists(path)) {
+        if (!pathExists(path)) {
             return false;
         }
     
         String[] parts = path.split("/");
         Folder current = root;
     
-        for (int i = 1; i < parts.length; i++) { // Skip "root"
+        for (int i = 1; i < parts.length - 1; i++) { // Skip "root"
             current = findDirectory(current, parts[i]);
             if (current == null) {
                 return false;
@@ -149,6 +143,29 @@ public class Directory {
     }
 
     /**
+     * Finds a file or directory with the given name in the specified folder.
+     *
+     * @param current the current folder
+     * @param name    the name of the file or directory to find
+     * @param type    the type of the element to find ("file" or "folder")
+     * @return the found file or directory, or null if not found
+     */
+
+    public static FileExplorerElement findFileExplorerElement(Folder current, String name, String type) {
+        for (FileExplorerElement element : current.getContents()) {
+            if (element.getName().equals(name)) {
+                if (type.equalsIgnoreCase("file") && element instanceof File) {
+                    return (File) element;
+                } else if (type.equalsIgnoreCase("folder") && element instanceof Folder) {
+                    return (Folder) element;
+                }
+            }
+        }
+        return null;
+    }
+
+
+    /**
      * Finds a file with the given name in the specified folder.
      *
      * @param current the current folder
@@ -156,13 +173,22 @@ public class Directory {
      * @return the found file, or null if not found
      */
     public static File findFile(Folder current, String name) {
-        for (FileExplorerElement element : current.getContents()) {
-            if (element.getName().equals(name) && element instanceof File) {
-                return (File) element;
-            }
-        }
-        return null;
+        FileExplorerElement element = findFileExplorerElement(current, name, "file");
+        return (element instanceof File) ? (File) element : null;
     }
+
+    /**
+     * Finds a directory with the given name in the specified folder.
+     *
+     * @param current the current folder
+     * @param name    the name of the directory to find
+     * @return the found directory, or null if not found
+     */
+    public static Folder findDirectory(Folder current, String name) {
+        FileExplorerElement element = findFileExplorerElement(current, name, "folder");
+        return (element instanceof Folder) ? (Folder) element : null;
+    }
+
 
     /**
      * Deletes a file at the specified file path.
