@@ -25,13 +25,12 @@ public class Directory {
      *
      * @param filePath the file path
      */
-    public static void createFile(String filePath) {
-        String[] parts = filePath.split("/");
+    public static void createFile(String destinationPath, String filename) {
         Folder current = root;
-        if (pathExists(filePath)) {
+        if (pathExists(destinationPath)) {
             // file type will depend on user (import java.util.Scanner?)
             // file size... (Math.Random? just for the classification purposes)
-            current.getContents().add(new File(parts[parts.length - 1], new Date().toString(), "txt", "1KB"));
+            current.getContents().add(new File(filename, new Date().toString(), "txt", "1KB"));
         }
     }
 
@@ -361,7 +360,7 @@ public class Directory {
         for (FileExplorerElement element : current.getContents()) {
             if (element instanceof Folder) {
                 displayDirectoryRecursive((Folder) element, level + 1);
-            } else {
+            } else if (element instanceof File) {
                 System.out.println(indent + " " + element.getName());
             }
         }
